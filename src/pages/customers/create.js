@@ -24,27 +24,29 @@ const Create = () => {
 
     const submitForm = async event => {
         event.preventDefault();
+
+        // TODO: validation
+
         const response = await axios
             .post('/api/customers', {
                 name: 'Lorem',
-                ic_number: '00011223',
-                ic_type_id: 1,
-                ic_color_id: 1,
-                ic_expiry_date: '01/01/2001',
-                country_id: 1,
-                customer_title_id: 1,
-                birth_date: '01/01/2002',
+                ic_number: icNumber,
+                ic_type_id: icTypeId,
+                ic_color_id: icColorId,
+                ic_expiry_date: icExpiryDate,
+                country_id: countryId,
+                customer_title_id: customerTitleId,
+                birth_date: birthDate,
             })
             .then(res => {
-                console.log('success');
-                const id = res.data;
-                router.push(`/customers/${id}`);
+                console.log('success')
+                const id = res.data
+                router.push(`/customers/${id}`)
             })
             .catch(error => {
-                console.log('error');
-                console.error(error);
-            });
-        
+                console.log('error')
+                console.error(error)
+            })
     }
 
     return (
@@ -57,7 +59,6 @@ const Create = () => {
                         </a>
                     </Link>
                 }>
-
                 <form onSubmit={submitForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
@@ -68,6 +69,7 @@ const Create = () => {
                             value={name}
                             className="block mt-1 w-full"
                             onChange={event => setName(event.target.value)}
+                            required
                             autoFocus
                         />
 
@@ -82,72 +84,92 @@ const Create = () => {
                             type="text"
                             value={icNumber}
                             className="block mt-1 w-full"
+                            required
                             onChange={event => setIcNumber(event.target.value)}
                         />
 
-                        <InputError messages={errors.icNumber} className="mt-2" />
+                        <InputError
+                            messages={errors.icNumber}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
                         <Label htmlFor="icTypeId">Ic Type Id</Label>
 
-                        <Input
+                        <select
                             id="icTypeId"
-                            type="text"
                             value={icTypeId}
-                            className="block mt-1 w-full"
-                            onChange={event => setIcTypeId(event.target.value)}
-                        />
+                            required
+                            onChange={event => setIcTypeId(event.target.value)}>
+                            <option value="">Select One</option>
+                            <option value={1}>Personal</option>
+                            <option value={2}>Company</option>
+                            <option value={3}>Passport</option>
+                        </select>
 
-                        <InputError messages={errors.icTypeId} className="mt-2" />
+                        <InputError
+                            messages={errors.icTypeId}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="icColorId">
-                            Ic Color Id
-                        </Label>
+                        <Label htmlFor="icColorId">Ic Color Id</Label>
 
-                        <Input
+                        <select
                             id="icColorId"
-                            type="text"
                             value={icColorId}
-                            className="block mt-1 w-full"
-                            onChange={event => setIcColorId(event.target.value)}
-                        />
+                            required
+                            onChange={event => setIcColorId(event.target.value)}>
+                            <option value="">Select One</option>
+                            <option value={1}>Yellow</option>
+                            <option value={2}>Green</option>
+                        </select>
 
-                        <InputError messages={errors.icColorId} className="mt-2" />
+                        <InputError
+                            messages={errors.icColorId}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="icExpiryDate">
-                            Ic Expiry Date
-                        </Label>
+                        <Label htmlFor="icExpiryDate">Ic Expiry Date</Label>
 
                         <Input
                             id="icExpiryDate"
-                            type="text"
+                            type="date"
                             value={icExpiryDate}
                             className="block mt-1 w-full"
-                            onChange={event => setIcExpiryDate(event.target.value)}
+                            required
+                            onChange={event =>
+                                setIcExpiryDate(event.target.value)
+                            }
                         />
 
-                        <InputError messages={errors.icExpiryDate} className="mt-2" />
+                        <InputError
+                            messages={errors.icExpiryDate}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="countryId">
-                            Country Id
-                        </Label>
+                        <Label htmlFor="countryId">Country Id</Label>
 
-                        <Input
+                        <select
                             id="countryId"
-                            type="text"
                             value={countryId}
-                            className="block mt-1 w-full"
-                            onChange={event => setCountryId(event.target.value)}
-                        />
+                            required
+                            onChange={event => setCountryId(event.target.value)}>
+                            <option value="">Select One</option>
+                            <option value={1}>Brunei</option>
+                            <option value={2}>Malaysia</option>
+                        </select>
 
-                        <InputError messages={errors.countryId} className="mt-2" />
+                        <InputError
+                            messages={errors.countryId}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
@@ -155,31 +177,38 @@ const Create = () => {
                             Customer Title Id
                         </Label>
 
-                        <Input
+                        <select
                             id="customerTitleId"
-                            type="text"
                             value={customerTitleId}
-                            className="block mt-1 w-full"
-                            onChange={event => setCustomerTitleId(event.target.value)}
-                        />
+                            required
+                            onChange={event => setCustomerTitleId(event.target.value)}>
+                            <option value="">Select One</option>
+                            <option value={1}>Hj</option>
+                            <option value={2}>Dr</option>
+                        </select>
 
-                        <InputError messages={errors.customerTitleId} className="mt-2" />
+                        <InputError
+                            messages={errors.customerTitleId}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="birthDate">
-                            Birth Date
-                        </Label>
+                        <Label htmlFor="birthDate">Birth Date</Label>
 
                         <Input
                             id="birthDate"
                             type="date"
                             value={birthDate}
                             className="block mt-1 w-full"
+                            required
                             onChange={event => setBirthDate(event.target.value)}
                         />
 
-                        <InputError messages={errors.birthDate} className="mt-2" />
+                        <InputError
+                            messages={errors.birthDate}
+                            className="mt-2"
+                        />
                     </div>
 
                     <div className="flex items-center justify-end mt-4">
