@@ -19,9 +19,9 @@ const Create = () => {
     const [icTypeId, setIcTypeId] = useState('')
     const [icColorId, setIcColorId] = useState('')
     const [icExpiryDate, setIcExpiryDate] = useState('')
-    const [countryId, setCountryId] = useState('')
+    const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
-    const [accountCategoryId, setAccountCategoryId] = useState('')
+    const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
     const [errors, setErrors] = useState([])
 
@@ -33,14 +33,14 @@ const Create = () => {
         const response = await axios
             .post('/api/customers', {
                 name: name,
-                email: email,
-                mobile_number: mobileNumber,
+                email: email === '' ? null : email,
+                mobile_number: mobileNumber === '' ? null : email,
                 ic_number: icNumber,
                 ic_type_id: icTypeId,
-                ic_color_id: icColorId,
+                ic_color_id: icColorId === '' ? null : icColorId,
                 ic_expiry_date: icExpiryDate,
                 country_id: countryId,
-                customer_title_id: customerTitleId,
+                customer_title_id: customerTitleId === '' ? null : customerTitleId,
                 account_category_id: accountCategoryId,
                 birth_date: birthDate,
             })
@@ -83,7 +83,7 @@ const Create = () => {
                     </div>
 
                     <div>
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">Email (optional)</Label>
 
                         <Input
                             id="email"
@@ -91,14 +91,13 @@ const Create = () => {
                             value={email}
                             className="block mt-1 w-full"
                             onChange={event => setEmail(event.target.value)}
-                            required
                         />
 
                         <InputError messages={errors.email} className="mt-2" />
                     </div>
 
                     <div>
-                        <Label htmlFor="mobileNumber">Mobile Number</Label>
+                        <Label htmlFor="mobileNumber">Mobile Number (optional)</Label>
 
                         <Input
                             id="mobileNumber"
@@ -106,7 +105,6 @@ const Create = () => {
                             value={mobileNumber}
                             className="block mt-1 w-full"
                             onChange={event => setMobileNumber(event.target.value)}
-                            required
                         />
 
                         <InputError messages={errors.mobileNumber} className="mt-2" />
@@ -151,12 +149,11 @@ const Create = () => {
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="icColorId">Ic Color Id</Label>
+                        <Label htmlFor="icColorId">Ic Color Id (Optional)</Label>
 
                         <select
                             id="icColorId"
                             value={icColorId}
-                            required
                             onChange={event => setIcColorId(event.target.value)}>
                             <option value="">Select One</option>
                             <option value={1}>Yellow</option>
@@ -197,7 +194,6 @@ const Create = () => {
                             value={countryId}
                             required
                             onChange={event => setCountryId(event.target.value)}>
-                            <option value="">Select One</option>
                             <option value={1}>Brunei</option>
                             <option value={2}>Malaysia</option>
                         </select>
@@ -210,7 +206,7 @@ const Create = () => {
 
                     <div className="mt-4">
                         <Label htmlFor="customerTitleId">
-                            Customer Title Id
+                            Customer Title Id (optional)
                         </Label>
 
                         <select
@@ -218,7 +214,7 @@ const Create = () => {
                             value={customerTitleId}
                             required
                             onChange={event => setCustomerTitleId(event.target.value)}>
-                            <option value="">Select One</option>
+                            <option>Select One</option>
                             <option value={1}>Hj</option>
                             <option value={2}>Dr</option>
                         </select>
@@ -239,7 +235,6 @@ const Create = () => {
                             value={accountCategoryId}
                             required
                             onChange={event => setAccountCategoryId(event.target.value)}>
-                            <option value="">Select One</option>
                             <option value={1}>Brunei Personal</option>
                             <option value={2}>Foreign Personal</option>
                             <option value={3}>Company</option>
