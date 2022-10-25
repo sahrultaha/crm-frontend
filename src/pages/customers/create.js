@@ -13,12 +13,15 @@ import { useRouter } from 'next/router'
 const Create = () => {
     const router = useRouter()
     const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [mobileNumber, setMobileNumber] = useState('')
     const [icNumber, setIcNumber] = useState('')
     const [icTypeId, setIcTypeId] = useState('')
     const [icColorId, setIcColorId] = useState('')
     const [icExpiryDate, setIcExpiryDate] = useState('')
     const [countryId, setCountryId] = useState('')
     const [customerTitleId, setCustomerTitleId] = useState('')
+    const [accountCategoryId, setAccountCategoryId] = useState('')
     const [birthDate, setBirthDate] = useState('')
     const [errors, setErrors] = useState([])
 
@@ -29,18 +32,21 @@ const Create = () => {
 
         const response = await axios
             .post('/api/customers', {
-                name: 'Lorem',
+                name: name,
+                email: email,
+                mobile_number: mobileNumber,
                 ic_number: icNumber,
                 ic_type_id: icTypeId,
                 ic_color_id: icColorId,
                 ic_expiry_date: icExpiryDate,
                 country_id: countryId,
                 customer_title_id: customerTitleId,
+                account_category_id: accountCategoryId,
                 birth_date: birthDate,
             })
             .then(res => {
                 console.log('success')
-                const id = res.data
+                const id = res.data.id
                 router.push(`/customers/${id}`)
             })
             .catch(error => {
@@ -74,6 +80,36 @@ const Create = () => {
                         />
 
                         <InputError messages={errors.name} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="email">Email</Label>
+
+                        <Input
+                            id="email"
+                            type="text"
+                            value={email}
+                            className="block mt-1 w-full"
+                            onChange={event => setEmail(event.target.value)}
+                            required
+                        />
+
+                        <InputError messages={errors.email} className="mt-2" />
+                    </div>
+
+                    <div>
+                        <Label htmlFor="mobileNumber">Mobile Number</Label>
+
+                        <Input
+                            id="mobileNumber"
+                            type="text"
+                            value={mobileNumber}
+                            className="block mt-1 w-full"
+                            onChange={event => setMobileNumber(event.target.value)}
+                            required
+                        />
+
+                        <InputError messages={errors.mobileNumber} className="mt-2" />
                     </div>
 
                     <div className="mt-4">
@@ -189,6 +225,30 @@ const Create = () => {
 
                         <InputError
                             messages={errors.customerTitleId}
+                            className="mt-2"
+                        />
+                    </div>
+
+                    <div className="mt-4">
+                        <Label htmlFor="accountCategoryId">
+                            Account Category
+                        </Label>
+
+                        <select
+                            id="accountCategoryId"
+                            value={accountCategoryId}
+                            required
+                            onChange={event => setAccountCategoryId(event.target.value)}>
+                            <option value="">Select One</option>
+                            <option value={1}>Brunei Personal</option>
+                            <option value={2}>Foreign Personal</option>
+                            <option value={3}>Company</option>
+                            <option value={4}>Embassy</option>
+                            <option value={5}>Government</option>
+                        </select>
+
+                        <InputError
+                            messages={errors.accountCategoryId}
                             className="mt-2"
                         />
                     </div>
