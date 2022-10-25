@@ -25,6 +25,18 @@ const Create = () => {
     const [birthDate, setBirthDate] = useState('')
     const [errors, setErrors] = useState([])
 
+    const onNameChangeHandler = event => setName(event.target.value.trim())
+    const onEmailChangeHandler = event => setEmail(event.target.value.trim())
+    const onMobileNumberChangeHandler = event => setMobileNumber(event.target.value.trim())
+    const onIcNumberChangeHandler = event => setIcNumber(event.target.value.trim())
+    const onIcTypeIdChangeHandler = event => setIcTypeId(event.target.value)
+    const onIcColorIdChangeHandler = event => setIcColorId(event.target.value)
+    const onIcExpiryDateChangeHandler = event => setIcExpiryDate(event.target.value.trim())
+    const onCountryIdChangeHandler = event => setCountryId(event.target.value)
+    const onCustomerTitleIdChangeHandler = event => setCustomerTitleId(event.target.value)
+    const onAccountCategoryIdChangeHandler = event => setAccountCategoryId(event.target.value)
+    const onBirthDateChangeHandler = event => setBirthDate(event.target.value.trim())
+
     const submitForm = async event => {
         event.preventDefault()
 
@@ -34,14 +46,13 @@ const Create = () => {
             .post('/api/customers', {
                 name: name,
                 email: email === '' ? null : email,
-                mobile_number: mobileNumber === '' ? null : email,
+                mobile_number: mobileNumber === '' ? null : mobileNumber,
                 ic_number: icNumber,
                 ic_type_id: icTypeId,
                 ic_color_id: icColorId === '' ? null : icColorId,
                 ic_expiry_date: icExpiryDate,
                 country_id: countryId,
-                customer_title_id:
-                    customerTitleId === '' ? null : customerTitleId,
+                customer_title_id: customerTitleId === '' ? null : customerTitleId,
                 account_category_id: accountCategoryId,
                 birth_date: birthDate,
             })
@@ -50,7 +61,7 @@ const Create = () => {
                 router.push(`/customers/${id}`)
             })
             .catch(error => {
-                console.log('error!');
+                console.log('error!')
                 if (error.response) {
                     // console.log(error.response.status)
                     // console.log(error.response.data)
@@ -84,7 +95,7 @@ const Create = () => {
                             type="text"
                             value={name}
                             className="block mt-1 w-full"
-                            onChange={event => setName(event.target.value)}
+                            onChange={onNameChangeHandler}
                             required
                             pattern="[^\s][a-zA-Z\s]+"
                             autoFocus
@@ -101,7 +112,7 @@ const Create = () => {
                             type="email"
                             value={email}
                             className="block mt-1 w-full"
-                            onChange={event => setEmail(event.target.value)}
+                            onChange={onEmailChangeHandler}
                         />
 
                         <InputError messages={errors.email} className="mt-2" />
@@ -118,9 +129,7 @@ const Create = () => {
                             value={mobileNumber}
                             pattern="[0-9]{7,10}"
                             className="block mt-1 w-full"
-                            onChange={event =>
-                                setMobileNumber(event.target.value)
-                            }
+                            onChange={onMobileNumberChangeHandler}
                         />
 
                         <InputError
@@ -139,7 +148,7 @@ const Create = () => {
                             pattern="[a-zA-Z0-9]{2}[0-9]{6}"
                             className="block mt-1 w-full"
                             required
-                            onChange={event => setIcNumber(event.target.value)}
+                            onChange={onIcNumberChangeHandler}
                         />
 
                         <InputError
@@ -149,13 +158,13 @@ const Create = () => {
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="icTypeId">Ic Type Id</Label>
+                        <Label htmlFor="icTypeId">Ic Type</Label>
 
                         <select
                             id="icTypeId"
                             value={icTypeId}
                             required
-                            onChange={event => setIcTypeId(event.target.value)}>
+                            onChange={onIcTypeIdChangeHandler}>
                             <option value="">Select One</option>
                             <option value={1}>Personal</option>
                             <option value={2}>Company</option>
@@ -170,15 +179,13 @@ const Create = () => {
 
                     <div className="mt-4">
                         <Label htmlFor="icColorId">
-                            Ic Color Id (Optional)
+                            Ic Color (Optional)
                         </Label>
 
                         <select
                             id="icColorId"
                             value={icColorId}
-                            onChange={event =>
-                                setIcColorId(event.target.value)
-                            }>
+                            onChange={onIcColorIdChangeHandler}>
                             <option value="">Select One</option>
                             <option value={1}>Yellow</option>
                             <option value={2}>Green</option>
@@ -199,9 +206,7 @@ const Create = () => {
                             value={icExpiryDate}
                             className="block mt-1 w-full"
                             required
-                            onChange={event =>
-                                setIcExpiryDate(event.target.value)
-                            }
+                            onChange={onIcExpiryDateChangeHandler}
                         />
 
                         <InputError
@@ -211,15 +216,13 @@ const Create = () => {
                     </div>
 
                     <div className="mt-4">
-                        <Label htmlFor="countryId">Country Id</Label>
+                        <Label htmlFor="countryId">Country</Label>
 
                         <select
                             id="countryId"
                             value={countryId}
                             required
-                            onChange={event =>
-                                setCountryId(event.target.value)
-                            }>
+                            onChange={onCountryIdChangeHandler}>
                             <option value={1}>Brunei</option>
                             <option value={2}>Malaysia</option>
                         </select>
@@ -232,15 +235,13 @@ const Create = () => {
 
                     <div className="mt-4">
                         <Label htmlFor="customerTitleId">
-                            Customer Title Id (optional)
+                            Customer Title (optional)
                         </Label>
 
                         <select
                             id="customerTitleId"
                             value={customerTitleId}
-                            onChange={event =>
-                                setCustomerTitleId(event.target.value)
-                            }>
+                            onChange={onCustomerTitleIdChangeHandler}>
                             <option>Select One</option>
                             <option value={1}>Mr</option>
                             <option value={2}>Ms</option>
@@ -265,9 +266,7 @@ const Create = () => {
                             id="accountCategoryId"
                             value={accountCategoryId}
                             required
-                            onChange={event =>
-                                setAccountCategoryId(event.target.value)
-                            }>
+                            onChange={onAccountCategoryIdChangeHandler}>
                             <option value={1}>Brunei Personal</option>
                             <option value={2}>Foreign Personal</option>
                             <option value={3}>Company</option>
@@ -290,7 +289,7 @@ const Create = () => {
                             value={birthDate}
                             className="block mt-1 w-full"
                             required
-                            onChange={event => setBirthDate(event.target.value)}
+                            onChange={onBirthDateChangeHandler}
                         />
 
                         <InputError
