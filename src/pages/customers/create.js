@@ -215,8 +215,12 @@ const Create = () => {
                             required
                             onChange={event => setCustomerTitleId(event.target.value)}>
                             <option>Select One</option>
-                            <option value={1}>Hj</option>
-                            <option value={2}>Dr</option>
+                            <option value={1}>Mr</option>
+                            <option value={2}>Ms</option>
+                            <option value={3}>Mrs</option>
+                            <option value={4}>Haji</option>
+                            <option value={5}>Hajah</option>
+                            <option value={6}>Dr</option>
                         </select>
 
                         <InputError
