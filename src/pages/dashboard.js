@@ -21,6 +21,9 @@ const Dashboard = () => {
                             <Link href="/customers/create">
                                 <a>Create New Customer</a>
                             </Link>
+                            <Link href="/customers">
+                                <a>Customers List</a>
+                            </Link>
                         </div>
                     </div>
                 </div>
