@@ -4,6 +4,19 @@ import { useState, useEffect } from 'react'
 import Label from '@/components/Label'
 import axios from '@/lib/axios'
 
+function Customer(props) {
+    const data = props.data || []
+    if (props.isLoading) return "Loading..."
+    if (data.length === 0) return "Empty result."
+    return <ul className="my-8">
+        {data.map(customer => (
+            <li key={customer.id}>
+                {customer.id} - {customer.name}
+            </li>
+        ))}
+    </ul>
+}
+
 const Index = () => {
     const [data, setData] = useState(null)
     const [currentPage, setCurrentPage] = useState(1)
@@ -56,7 +69,6 @@ const Index = () => {
     }, [currentPage, currentLimit, currentSort, currentLastPage])
 
     if (isLoading) return <p>Loading...</p>
-    if (!data || data?.length === 0) return <p>No data.</p>
 
     const pageLinks = []
     for (let i = 1; i <= currentLastPage; i++) {
@@ -116,19 +128,12 @@ const Index = () => {
                                     </div>
                                     <div>
                                         <Label htmlFor="simple-search">Search</Label>
-                                        <input className="mr-4" type="text" id="search" placeholder="Search (minimum 4 letters)" value={search} onChange={onSearchChange} min="4"/>
+                                        <input className="mr-4" type="text" id="search" placeholder="Search (minimum 4 letters)" value={search} onChange={onSearchChange} minLength="4"/>
                                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Search</button>
                                     </div>
                                 </form>
                             </div>
-
-                            <ul className="my-8">
-                                {data.map(customer => (
-                                    <li key={customer.id}>
-                                        {customer.id} - {customer.name}
-                                    </li>
-                                ))}
-                            </ul>
+                            <Customer data={data} loading={isLoading}></Customer>
 
                             <div>
                                 <h2>Pages</h2>
