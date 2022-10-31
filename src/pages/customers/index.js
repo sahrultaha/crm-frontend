@@ -11,6 +11,7 @@ const Index = () => {
     const [currentLimit, setCurrentLimit] = useState(10)
     const [currentSort, setCurrentSort] = useState('desc')
     const [isLoading, setLoading] = useState(false)
+    const [search, setSearch] = useState('')
 
     const onSortChangeHandler = event => {
         setCurrentSort(event.target.value)
@@ -21,31 +22,33 @@ const Index = () => {
     }
 
     const onPageChangeHandler = newPageNumber => {
-        console.log('newPageNumber', newPageNumber)
         setCurrentPage(newPageNumber)
     }
 
     const getCustomersList = () => {
         if (isLoading) return
 
-        setLoading(true)
         axios(
-            `/api/customers?page=${currentPage}&limit=${currentLimit}&sort=${currentSort}`,
+            `/api/customers?page=${currentPage}&limit=${currentLimit}&sort=${currentSort}&search=${search}`
         )
             .then(res => {
-                console.log('data:')
-                console.log(res.data)
                 setData(res.data.data)
                 setCurrentLastPage(res.data.meta.last_page)
             })
             .catch(error => {
-                console.log('error:')
-                console.log(error)
                 setData(null)
             })
             .finally(() => {
                 setLoading(false)
             })
+    }
+    const onSearchChange = (event) => {
+        setSearch(event.target.value)
+    }
+
+    const handleSearchSubmit = (event) => {
+        event.preventDefault()
+        getCustomersList()
     }
 
     useEffect(() => {
@@ -83,34 +86,40 @@ const Index = () => {
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex items-center">
-                                <div className="mr-4">
-                                    <Label htmlFor="sort">Sort</Label>
+                                <form className="flex items-center" onSubmit={handleSearchSubmit}>
+                                    <div className="mr-4">
+                                        <Label htmlFor="sort">Sort</Label>
 
-                                    <select
-                                        id="sort"
-                                        value={currentSort}
-                                        required
-                                        onChange={onSortChangeHandler}>
-                                        <option value="asc">Asc</option>
-                                        <option value="desc">Desc</option>
-                                    </select>
-                                </div>
+                                        <select
+                                            id="sort"
+                                            value={currentSort}
+                                            required
+                                            onChange={onSortChangeHandler}>
+                                            <option value="asc">Asc</option>
+                                            <option value="desc">Desc</option>
+                                        </select>
+                                    </div>
 
-                                <div>
-                                    <Label htmlFor="limit">Limit</Label>
-
-                                    <select
-                                        id="limit"
-                                        value={currentLimit}
-                                        required
-                                        onChange={onLimitChangeHandler}>
-                                        <option value={1}>1</option>
-                                        <option value={5}>5</option>
-                                        <option value={10}>10</option>
-                                        <option value={20}>20</option>
-                                        <option value={30}>30</option>
-                                    </select>
-                                </div>
+                                    <div className="mr-4">
+                                        <Label htmlFor="limit">Limit</Label>
+                                        <select
+                                            id="limit"
+                                            value={currentLimit}
+                                            required
+                                            onChange={onLimitChangeHandler}>
+                                            <option value={1}>1</option>
+                                            <option value={5}>5</option>
+                                            <option value={10}>10</option>
+                                            <option value={20}>20</option>
+                                            <option value={30}>30</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="simple-search">Search</Label>
+                                        <input className="mr-4" type="text" id="search" placeholder="Search (minimum 4 letters)" value={search} onChange={onSearchChange} min="4"/>
+                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Search</button>
+                                    </div>
+                                </form>
                             </div>
 
                             <ul className="my-8">
