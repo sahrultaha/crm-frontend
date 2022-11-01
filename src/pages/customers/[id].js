@@ -2,30 +2,50 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import axios from '@/lib/axios'
-import React, { useState, setEffect, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 const Show = () => {
     const router = useRouter()
     const { id } = router.query
-    const [data, setData] = useState([])
-    // const getData = async () => {
+    const [data, setData] = useState(null)
+    const [icUrls, setIcUrls] = useState([])
 
-    // };
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
         axios
             .get(`/api/customers/${CustomerId}`)
             .then(response => {
-                console.log(response.data)
-                // console.log(id)
                 setData(response.data)
             })
             .catch(error => {
-                // console.log(error)
+                console.log('Error fetching customer details...', error)
             })
     }, [router.isReady])
-    if (isNaN(data.id))
+
+    useEffect(async () => {
+        if (!data) {
+            console.log('no data, abort fetching images...')
+            return
+        }
+
+        try {
+            for (const fileId of data.file_ids) {
+                const resp = await axios.get(`/api/files/${fileId}`)
+                setIcUrls(prevState => [
+                    ...prevState,
+                    {
+                        id: fileId,
+                        url: resp.data.url,
+                    },
+                ])
+            }
+        } catch (e) {
+            console.log('Error getting file urls...', e)
+        }
+    }, [data])
+
+    if (data === null || isNaN(data?.id))
         return (
             <AppLayout
                 header={
@@ -95,6 +115,15 @@ const Show = () => {
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             Country ID : {data.country_id}
+                        </div>
+                        <div className="p-6 bg-white border-b border-gray-200">
+                            {icUrls.map(obj => (
+                                <img
+                                    key={obj.id}
+                                    src={obj.url}
+                                    className="inline-block w-20 h-20 mr-4"
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
