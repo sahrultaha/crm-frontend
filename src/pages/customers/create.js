@@ -344,8 +344,6 @@ const Create = () => {
 
                         <div className="mt-4">
                             <MyCombobox onSelected={onVillageSelected}/>
-                            
-                            
                         </div>
 
 
