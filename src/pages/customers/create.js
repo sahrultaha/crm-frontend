@@ -26,14 +26,62 @@ const Create = () => {
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
+    const [checkIcExist, setIcCheckExist] = useState(null)
 
     const onNameChangeHandler = event => setName(event.target.value.trim())
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
-    const onIcNumberChangeHandler = event =>
+
+
+    const onIcNumberChangeHandler = event => {
+        if (icTypeId != "") {
+            axios
+                .get(
+                    `/api/customers/search?ic_number=${event.target.value}}&ic_type_id=${icTypeId}`,
+                )
+                .then(res => {
+                    console.log('data:')
+                    console.log(res.data)
+                    if (res.data.length > 0) {
+                        alert("Customer already exist");
+                    } else {
+                        setIcNumber(event.target.value)
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
+
+
         setIcNumber(event.target.value.trim())
-    const onIcTypeIdChangeHandler = event => setIcTypeId(event.target.value)
+    }
+    const onIcTypeIdChangeHandler = event => {
+        // alert( `/api/customers/search?ic=${icNumber}&ic_type_id=${event.target.value}`)
+        axios
+            .get(
+                `/api/customers/search?ic_number=${icNumber}&ic_type_id=${event.target.value}`,
+            )
+            .then(res => {
+                console.log('data:')
+                console.log(res.data.length)
+                console.log(res.data[0]['id'])
+                if (res.data.length > 0) {
+                    // alert("Customer already exist");
+                    setIcCheckExist(res.data[0]['id'])
+                    setIcTypeId('')
+                    setIcNumber('')
+                } else {
+                    setIcTypeId(event.target.value)
+
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
+        setIcTypeId(event.target.value)
+    }
     const onIcColorIdChangeHandler = event => setIcColorId(event.target.value)
     const onIcExpiryDateChangeHandler = event =>
         setIcExpiryDate(event.target.value.trim())
@@ -208,7 +256,7 @@ const Create = () => {
                             required
                             onChange={onIcNumberChangeHandler}
                         />
-
+                        {checkIcExist != null ? <p className="mt-2">Customer already exist! Click <a href={checkIcExist}>here</a> to view</p> : <p></p>}
                         <InputError
                             messages={errors.ic_number}
                             className="mt-2"
