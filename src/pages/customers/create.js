@@ -6,9 +6,11 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from '@/lib/axios'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
+import * as React from 'react';
+import MyCombobox from '@/components/MyCombobox'
 
 const Create = () => {
     const router = useRouter()
@@ -23,6 +25,16 @@ const Create = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
+    const [district, setDistrict] = useState('')
+    const [mukim, setMukim] = useState('')
+    const [village, setVillage] = useState('')
+    const [house_number, setHouseNumber] = useState('')
+    const [simpang, setSimpang] = useState('')
+    const [street, setStreet] = useState('')
+    const [building_name, setBuildingName] = useState('')
+    const [block, setBlock] = useState('')
+    const [floor, setFloor] = useState('')
+    const [unit, setUnit] = useState('')
     const [errors, setErrors] = useState([])
 
     const onNameChangeHandler = event => setName(event.target.value.trim())
@@ -36,6 +48,20 @@ const Create = () => {
     const onCustomerTitleIdChangeHandler = event => setCustomerTitleId(event.target.value)
     const onAccountCategoryIdChangeHandler = event => setAccountCategoryId(event.target.value)
     const onBirthDateChangeHandler = event => setBirthDate(event.target.value.trim())
+    const onHouseNumberChangeHandler = event => setHouseNumber(event.target.value.trim())
+    const onSimpangChangeHandler = event => setSimpang(event.target.value.trim())
+    const onStreetChangeHandler = event => setStreet(event.target.value.trim())
+    const onBuildingNameChangeHandler = event => setBuildingName(event.target.value.trim())
+    const onBlockChangeHandler = event => setBlock(event.target.value.trim())
+    const onFloorChangeHandler = event => setFloor(event.target.value.trim())
+    const onUnitChangeHandler = event => setUnit(event.target.value.trim())
+    const onVillageSelected = value => {
+        console.log('Village selected was ', value);
+        setVillage(value.name)
+        setMukim(value.mukim.name)
+        setDistrict(value.mukim.district.name);
+    }
+
 
     const submitForm = async event => {
         event.preventDefault()
@@ -55,6 +81,16 @@ const Create = () => {
                 customer_title_id: customerTitleId === '' ? null : customerTitleId,
                 account_category_id: accountCategoryId,
                 birth_date: birthDate,
+                districtId: districtId,
+                mukimId: mukimId,
+                villageId: villageId,
+                house_number: house_number,
+                simpang: simpang,
+                street: street,
+                building_name: building_name,
+                block: block,
+                floor: floor,
+                unit: unit,
             })
             .then(res => {
                 const id = res.data.id
@@ -75,6 +111,7 @@ const Create = () => {
                 console.log(error.config)
             })
     }
+
 
     return (
         <GuestLayout>
@@ -111,6 +148,7 @@ const Create = () => {
                             id="email"
                             type="email"
                             value={email}
+                            pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                             className="block mt-1 w-full"
                             onChange={onEmailChangeHandler}
                         />
@@ -145,6 +183,7 @@ const Create = () => {
                             id="icNumber"
                             type="text"
                             value={icNumber}
+                            placeholder="01234567"
                             pattern="[a-zA-Z0-9]{2}[0-9]{6}"
                             className="block mt-1 w-full"
                             required
@@ -297,6 +336,174 @@ const Create = () => {
                             className="mt-2"
                         />
                     </div>
+
+                    <div className="mt-4">
+                        <Label htmlFor="addressLabel">
+                            Kampung
+                        </Label>
+
+                        <div className="mt-4">
+                            <MyCombobox onSelected={onVillageSelected}/>
+                            
+                            
+                        </div>
+
+
+                        <div className="mt-4">
+                            <Label htmlFor="districtId">
+                                District
+                            </Label>
+
+                            <Label>{district}</Label>
+
+                            <InputError
+                                messages={errors.districtId}
+                                className="mt-2"
+                            />
+                        </div>
+                        
+                        <div className="mt-4">
+                            <Label htmlFor="mukimId">
+                                Mukim
+                            </Label>
+
+                            <Label>{mukim}</Label>
+
+                            <InputError
+                                messages={errors.mukimId}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="house_number">House Number</Label>
+
+                            <Input
+                                id="house_number"
+                                type="text"
+                                value={house_number}
+                                placeholder="e.g. No 10"
+                                className="block mt-1 w-full"
+                                required
+                                onChange={onHouseNumberChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.house_number}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="simpang">Simpang</Label>
+
+                            <Input
+                                id="simpang"
+                                type="text"
+                                value={simpang}
+                                placeholder="e.g. Simpang 51-1"
+                                className="block mt-1 w-full"
+                                required
+                                onChange={onSimpangChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.simpang}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="street">Street</Label>
+
+                            <Input
+                                id="street"
+                                type="text"
+                                value={street}
+                                className="block mt-1 w-full"
+                                placeholder="e.g. Jalan Pasir Berakas"
+                                required
+                                onChange={onStreetChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.street}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="building_name">Building Name</Label>
+
+                            <Input
+                                id="building_name"
+                                type="text"
+                                value={building_name}
+                                className="block mt-1 w-full"
+                                placeholder="e.g. 118 Residence"
+                                onChange={onBuildingNameChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.building_name}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="block">Block</Label>
+
+                            <Input
+                                id="block"
+                                type="text"
+                                value={block}
+                                placeholder="e.g. Block B"
+                                className="block mt-1 w-full"
+                                onChange={onBlockChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.block}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="floor">Floor</Label>
+
+                            <Input
+                                id="floor"
+                                type="text"
+                                value={floor}
+                                placeholder="e.g. 1st Floor"
+                                className="block mt-1 w-full"
+                                onChange={onFloorChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.floor}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-4">
+                            <Label htmlFor="unit">Unit</Label>
+
+                            <Input
+                                id="unit"
+                                type="text"
+                                value={unit}
+                                className="block mt-1 w-full"
+                                placeholder="e.g. Unit 2A"
+                                onChange={onUnitChangeHandler}
+                            />
+
+                            <InputError
+                                messages={errors.unit}
+                                className="mt-2"
+                            />
+                        </div>
+                    </div>  
 
                     <div className="flex items-center justify-end mt-4">
                         <Button className="ml-4">Create</Button>
