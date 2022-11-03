@@ -18,7 +18,7 @@ function Customer(props) {
         </ul>
     )
 }
-const AdvanceInputText = ({ label, data, setData, type = 'text' }) => {
+const AdvanceInputText = ({ label, data, setData, type = 'text', id=null }) => {
     const handleChange = event => {
         if (setData) setData(event.target.value)
     }
@@ -30,6 +30,7 @@ const AdvanceInputText = ({ label, data, setData, type = 'text' }) => {
                 value={data}
                 onChange={handleChange}
                 autoComplete="off"
+                id={id?id:null}
             />
         </div>
     )
@@ -46,16 +47,19 @@ const AdvanceForm = ({
     return (
         <div className="flex items">
             <AdvanceInputText
+                id="custName"
                 label="Name"
                 data={custName}
                 setData={setCustName}
             />
             <AdvanceInputText
+                id="custIc"
                 label="IC Number"
                 data={custIc}
                 setData={setCustIc}
             />
             <AdvanceInputText
+                id="custEmail"
                 label="Email"
                 data={custEmail}
                 setData={setCustEmail}
@@ -93,8 +97,11 @@ const Index = () => {
     const getCustomersList = () => {
         if (isLoading) return
         let usp = new URLSearchParams(
-            `page=${currentPage}&limit=${currentLimit}&sort=${currentSort}&search=${search}`,
+            `page=${currentPage}&limit=${currentLimit}&sort=${currentSort}`,
         )
+        if (search) {
+            usp.append('search', search)
+        }
         if (custName) {
             usp.append('name', custName)
         }
