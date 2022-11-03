@@ -35,21 +35,20 @@ const Create = () => {
 
 
     const onIcNumberChangeHandler = event => {
-        if (icTypeId != "") {
             axios
                 .get(
-                    `/api/customers/search?ic_number=${event.target.value}}&ic_type_id=${icTypeId}`,
+                    `/api/customers/search?ic_number=${event.target.value}&ic_type_id=${icTypeId}`,
                 )
                 .then(res => {
+                    // alert(res.data.length);
                     if (res.data.length > 0) {
-                        alert("Customer already exist");
+                        setIcCheckExist(res.data[0]['id'])
                     } else {
                         setIcNumber(event.target.value)
                     }
                 })
                 .catch(error => {
                 })
-        }
 
 
         setIcNumber(event.target.value.trim())
@@ -61,7 +60,6 @@ const Create = () => {
             )
             .then(res => {
                 if (res.data.length > 0) {
-                    // alert("Customer already exist");
                     setIcCheckExist(res.data[0]['id'])
                     setIcTypeId('')
                     setIcNumber('')
