@@ -41,8 +41,6 @@ const Create = () => {
                     `/api/customers/search?ic_number=${event.target.value}}&ic_type_id=${icTypeId}`,
                 )
                 .then(res => {
-                    console.log('data:')
-                    console.log(res.data)
                     if (res.data.length > 0) {
                         alert("Customer already exist");
                     } else {
@@ -50,7 +48,6 @@ const Create = () => {
                     }
                 })
                 .catch(error => {
-                    console.log(error)
                 })
         }
 
@@ -64,9 +61,6 @@ const Create = () => {
                 `/api/customers/search?ic_number=${icNumber}&ic_type_id=${event.target.value}`,
             )
             .then(res => {
-                console.log('data:')
-                console.log(res.data.length)
-                console.log(res.data[0]['id'])
                 if (res.data.length > 0) {
                     // alert("Customer already exist");
                     setIcCheckExist(res.data[0]['id'])
@@ -78,7 +72,7 @@ const Create = () => {
                 }
             })
             .catch(error => {
-                console.log(error)
+                // console.log(error)
             })
         setIcTypeId(event.target.value)
     }
