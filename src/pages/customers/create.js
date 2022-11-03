@@ -25,9 +25,10 @@ const Create = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
-    const [district, setDistrict] = useState('')
-    const [mukim, setMukim] = useState('')
+    const [district, setDistrict] = useState('-----')
+    const [mukim, setMukim] = useState('-----')
     const [village, setVillage] = useState('')
+    const [postalcode, setPostalCode] = useState('')
     const [house_number, setHouseNumber] = useState('')
     const [simpang, setSimpang] = useState('')
     const [street, setStreet] = useState('')
@@ -55,13 +56,27 @@ const Create = () => {
     const onBlockChangeHandler = event => setBlock(event.target.value.trim())
     const onFloorChangeHandler = event => setFloor(event.target.value.trim())
     const onUnitChangeHandler = event => setUnit(event.target.value.trim())
+    
+    const onPostalCodeChangeHandler =  event => setPostalCode(event.target.value.trim())
+    
     const onVillageSelected = value => {
-        console.log('Village selected was ', value);
+        
         setVillage(value.name)
         setMukim(value.mukim.name)
         setDistrict(value.mukim.district.name);
-    }
 
+        if (value.id != ''){
+            axios
+                .get(`/api/postalcode?search=${value.id}`)
+                .then(res => {
+                    setPostalCode(res.data[0].name)
+                })                
+                .catch(error=> {
+                    console.error(`Error: ${error}`)
+                })
+        }
+
+    }
 
     const submitForm = async event => {
         event.preventDefault()
@@ -81,9 +96,10 @@ const Create = () => {
                 customer_title_id: customerTitleId === '' ? null : customerTitleId,
                 account_category_id: accountCategoryId,
                 birth_date: birthDate,
-                districtId: districtId,
-                mukimId: mukimId,
-                villageId: villageId,
+                village: village,
+                district: district,
+                mukim: mukim,
+                postalcode: postalcode,
                 house_number: house_number,
                 simpang: simpang,
                 street: street,
@@ -371,6 +387,22 @@ const Create = () => {
                                 messages={errors.mukimId}
                                 className="mt-2"
                             />
+                        </div>
+
+                        <div className='mt-4'>
+                            <Label htmlFor="postal_code_id">
+                                Postal Code
+                            </Label>
+
+                            <Input
+                                id="postal_code_id"
+                                type="text"
+                                value={postalcode}
+                                className="block mt-1 w-full"
+                                required
+                                onChange={onPostalCodeChangeHandler}
+                            />
+
                         </div>
 
                         <div className="mt-4">
