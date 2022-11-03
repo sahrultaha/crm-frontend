@@ -55,7 +55,6 @@ const Create = () => {
         setIcNumber(event.target.value.trim())
     }
     const onIcTypeIdChangeHandler = event => {
-        // alert( `/api/customers/search?ic=${icNumber}&ic_type_id=${event.target.value}`)
         axios
             .get(
                 `/api/customers/search?ic_number=${icNumber}&ic_type_id=${event.target.value}`,
@@ -72,7 +71,7 @@ const Create = () => {
                 }
             })
             .catch(error => {
-                // console.log(error)
+                
             })
         setIcTypeId(event.target.value)
     }
