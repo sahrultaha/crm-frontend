@@ -40,10 +40,10 @@ const Create = () => {
                     `/api/customers/search?ic_number=${event.target.value}&ic_type_id=${icTypeId}`,
                 )
                 .then(res => {
-                    // alert(res.data.length);
                     if (res.data.length > 0) {
                         setIcCheckExist(res.data[0]['id'])
                     } else {
+                        setIcCheckExist(null);
                         setIcNumber(event.target.value)
                     }
                 })
@@ -64,6 +64,7 @@ const Create = () => {
                     setIcTypeId('')
                     setIcNumber('')
                 } else {
+                    setIcCheckExist(null);
                     setIcTypeId(event.target.value)
 
                 }
