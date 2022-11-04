@@ -25,6 +25,7 @@ const Create = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
+<<<<<<< HEAD
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
     const [village, setVillage] = useState('')
@@ -36,8 +37,10 @@ const Create = () => {
     const [block, setBlock] = useState('')
     const [floor, setFloor] = useState('')
     const [unit, setUnit] = useState('')
+=======
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
+>>>>>>> crm
     const [errors, setErrors] = useState([])
     const [checkIcExist, setIcCheckExist] = useState(null)
 
@@ -91,6 +94,7 @@ const Create = () => {
     const onIcExpiryDateChangeHandler = event =>
         setIcExpiryDate(event.target.value.trim())
     const onCountryIdChangeHandler = event => setCountryId(event.target.value)
+<<<<<<< HEAD
     const onCustomerTitleIdChangeHandler = event => setCustomerTitleId(event.target.value)
     const onAccountCategoryIdChangeHandler = event => setAccountCategoryId(event.target.value)
     const onBirthDateChangeHandler = event => setBirthDate(event.target.value.trim())
@@ -122,8 +126,16 @@ const Create = () => {
         }
 
     }
+=======
+    const onCustomerTitleIdChangeHandler = event =>
+        setCustomerTitleId(event.target.value)
+    const onAccountCategoryIdChangeHandler = event =>
+        setAccountCategoryId(event.target.value)
+    const onBirthDateChangeHandler = event =>
+        setBirthDate(event.target.value.trim())
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
+>>>>>>> crm
 
     const submitForm = async event => {
         event.preventDefault()
@@ -447,6 +459,7 @@ const Create = () => {
                     </div>
 
                     <div className="mt-4">
+<<<<<<< HEAD
                         <Label htmlFor="addressLabel">
                             Kampung
                         </Label>
@@ -626,8 +639,8 @@ const Create = () => {
                                 className="mt-2"
                             />
                         </div>
-                    </div> 
-                    <div className="mt-4">
+                    </div>  
+=======
                         <Label htmlFor="icFront">Ic Front</Label>
 
                         <Input
@@ -650,6 +663,7 @@ const Create = () => {
                             onChange={onIcBackChangeHandler}
                         />
                     </div>
+>>>>>>> crm
 
                     <div className="flex items-center justify-end mt-4">
                         <Button className="ml-4">Create</Button>
