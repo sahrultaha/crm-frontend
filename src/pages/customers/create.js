@@ -492,7 +492,6 @@ const Create = () => {
                                 type="text"
                                 value={postalcode}
                                 className="block mt-1 w-full"
-                                required
                                 onChange={onPostalCodeChangeHandler}
                             />
 
@@ -507,7 +506,6 @@ const Create = () => {
                                 value={house_number}
                                 placeholder="e.g. No 10"
                                 className="block mt-1 w-full"
-                                required
                                 onChange={onHouseNumberChangeHandler}
                             />
 
@@ -526,7 +524,6 @@ const Create = () => {
                                 value={simpang}
                                 placeholder="e.g. Simpang 51-1"
                                 className="block mt-1 w-full"
-                                required
                                 onChange={onSimpangChangeHandler}
                             />
 
@@ -545,7 +542,6 @@ const Create = () => {
                                 value={street}
                                 className="block mt-1 w-full"
                                 placeholder="e.g. Jalan Pasir Berakas"
-                                required
                                 onChange={onStreetChangeHandler}
                             />
 
