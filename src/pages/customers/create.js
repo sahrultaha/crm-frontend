@@ -285,7 +285,7 @@ const Create = () => {
                             <option value="">Select One</option>
                             <option value={1}>Yellow</option>
                             <option value={2}>Green</option>
-                            <option value={3}>Red</option>
+                            <option value={3}>Purple</option>
                         </select>
 
                         <InputError
