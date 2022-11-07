@@ -28,7 +28,7 @@ const Create = () => {
     const [errors, setErrors] = useState([])
     const [checkIcExist, setIcCheckExist] = useState(null)
 
-    const onNameChangeHandler = event => setName(event.target.value.trim())
+    const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
