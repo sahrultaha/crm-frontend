@@ -6,11 +6,12 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from '@/lib/axios'
-import Router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import * as React from 'react';
 import MyCombobox from '@/components/MyCombobox'
+import IcCheckingInputs from '@/components/IcCheckingInputs'
 
 const Create = () => {
     const router = useRouter()
@@ -19,6 +20,7 @@ const Create = () => {
     const [mobileNumber, setMobileNumber] = useState('')
     const [icNumber, setIcNumber] = useState('')
     const [icTypeId, setIcTypeId] = useState('')
+    const [existingCustomer, setExistingCustomer] = useState('')
     const [icColorId, setIcColorId] = useState('')
     const [icExpiryDate, setIcExpiryDate] = useState('')
     const [countryId, setCountryId] = useState(1)
@@ -39,54 +41,14 @@ const Create = () => {
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
-    const [checkIcExist, setIcCheckExist] = useState(null)
 
+    const onIcNumberChangeHandler = val => setIcNumber(val)
+    const onIcTypeIdChangeHandler = val => setIcTypeId(val)
+    const onExistingCustomerHandler = val => setExistingCustomer(val)
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
-
-
-    const onIcNumberChangeHandler = event => {
-            axios
-                .get(
-                    `/api/customers/search?ic_number=${event.target.value}&ic_type_id=${icTypeId}`,
-                )
-                .then(res => {
-                    if (res.data.length > 0) {
-                        setIcCheckExist(res.data[0]['id'])
-                    } else {
-                        setIcCheckExist(null);
-                        setIcNumber(event.target.value)
-                    }
-                })
-                .catch(error => {
-                })
-
-
-        setIcNumber(event.target.value.trim())
-    }
-    const onIcTypeIdChangeHandler = event => {
-        axios
-            .get(
-                `/api/customers/search?ic_number=${icNumber}&ic_type_id=${event.target.value}`,
-            )
-            .then(res => {
-                if (res.data.length > 0) {
-                    setIcCheckExist(res.data[0]['id'])
-                    setIcTypeId('')
-                    setIcNumber('')
-                } else {
-                    setIcCheckExist(null);
-                    setIcTypeId(event.target.value)
-
-                }
-            })
-            .catch(error => {
-                
-            })
-        setIcTypeId(event.target.value)
-    }
     const onIcColorIdChangeHandler = event => setIcColorId(event.target.value)
     const onIcExpiryDateChangeHandler = event =>
         setIcExpiryDate(event.target.value.trim())
@@ -287,45 +249,10 @@ const Create = () => {
                         />
                     </div>
 
-                    <div className="mt-4">
-                        <Label htmlFor="icNumber">Ic Number</Label>
-
-                        <Input
-                            id="icNumber"
-                            type="text"
-                            value={icNumber}
-                            placeholder="01234567"
-                            pattern="[a-zA-Z0-9]{2}[0-9]{6}"
-                            className="block mt-1 w-full"
-                            required
-                            onChange={onIcNumberChangeHandler}
-                        />
-                        {checkIcExist != null ? <p className="mt-2">Customer already exist! Click <a href={checkIcExist}>here</a> to view</p> : <p></p>}
-                        <InputError
-                            messages={errors.ic_number}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="mt-4">
-                        <Label htmlFor="icTypeId">Ic Type</Label>
-
-                        <select
-                            id="icTypeId"
-                            value={icTypeId}
-                            required
-                            onChange={onIcTypeIdChangeHandler}>
-                            <option value="">Select One</option>
-                            <option value={1}>Personal</option>
-                            <option value={2}>Company</option>
-                            <option value={3}>Passport</option>
-                        </select>
-
-                        <InputError
-                            messages={errors.ic_type_id}
-                            className="mt-2"
-                        />
-                    </div>
+                    <IcCheckingInputs 
+                        onIcNumberChange={onIcNumberChangeHandler}
+                        onIcTypeIdChange={onIcTypeIdChangeHandler}
+                        onCustomerChange={onExistingCustomerHandler}/>
 
                     <div className="mt-4">
                         <Label htmlFor="icColorId">Ic Color (Optional)</Label>
