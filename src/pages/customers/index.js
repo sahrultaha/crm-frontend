@@ -114,7 +114,7 @@ const Index = () => {
         if (custIc) {
             usp.append('ic', custIc)
         }
-        axios(`/api/customers?page=` + usp.toString())
+        axios(`/api/customers?` + usp.toString())
             .then(res => {
                 setData(res.data.data)
                 setCurrentLastPage(res.data.meta.last_page)
@@ -154,6 +154,7 @@ const Index = () => {
         pageLinks.push(
             <li
                 key={i}
+                id={'page-link-'+i}
                 className="mr-2 cursor-pointer"
                 onClick={() => onPageChangeHandler(i)}>
                 {i}
