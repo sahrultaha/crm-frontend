@@ -41,7 +41,7 @@ const Create = () => {
     const [errors, setErrors] = useState([])
     const [checkIcExist, setIcCheckExist] = useState(null)
 
-    const onNameChangeHandler = event => setName(event.target.value.trim())
+    const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
@@ -336,6 +336,7 @@ const Create = () => {
                             <option value="">Select One</option>
                             <option value={1}>Yellow</option>
                             <option value={2}>Green</option>
+                            <option value={3}>Purple</option>
                         </select>
 
                         <InputError

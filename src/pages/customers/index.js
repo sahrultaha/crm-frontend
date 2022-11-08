@@ -6,15 +6,67 @@ import axios from '@/lib/axios'
 
 function Customer(props) {
     const data = props.data || []
-    if (props.isLoading) return "Loading..."
-    if (data.length === 0) return "Empty result."
-    return <ul className="my-8">
-        {data.map(customer => (
-            <li key={customer.id}>
-                {customer.id} - {customer.name}
-            </li>
-        ))}
-    </ul>
+    if (props.isLoading) return 'Loading...'
+    if (data.length === 0) return 'Empty result.'
+    return (
+        <ul className="my-8">
+            {data.map(customer => (
+                <li key={customer.id}>
+                    {customer.id} - {customer.name}
+                </li>
+            ))}
+        </ul>
+    )
+}
+const AdvanceInputText = ({ label, data, setData, type = 'text', id=null }) => {
+    const handleChange = event => {
+        if (setData) setData(event.target.value)
+    }
+    return (
+        <div className="mr-4">
+            <Label>{label}</Label>
+            <input
+                type={type}
+                value={data}
+                onChange={handleChange}
+                autoComplete="off"
+                id={id?id:null}
+            />
+        </div>
+    )
+}
+
+const AdvanceForm = ({
+    custName,
+    setCustName,
+    custEmail,
+    setCustEmail,
+    custIc,
+    setCustIc,
+}) => {
+    return (
+        <div className="flex items">
+            <AdvanceInputText
+                id="custName"
+                label="Name"
+                data={custName}
+                setData={setCustName}
+            />
+            <AdvanceInputText
+                id="custIc"
+                label="IC Number"
+                data={custIc}
+                setData={setCustIc}
+            />
+            <AdvanceInputText
+                id="custEmail"
+                label="Email"
+                data={custEmail}
+                setData={setCustEmail}
+                type="email"
+            />
+        </div>
+    )
 }
 
 const Index = () => {
@@ -25,6 +77,10 @@ const Index = () => {
     const [currentSort, setCurrentSort] = useState('desc')
     const [isLoading, setLoading] = useState(false)
     const [search, setSearch] = useState('')
+    const [advanced, setAdvanced] = useState(false)
+    const [custName, setCustName] = useState('')
+    const [custEmail, setCustEmail] = useState('')
+    const [custIc, setCustIc] = useState('')
 
     const onSortChangeHandler = event => {
         setCurrentSort(event.target.value)
@@ -40,10 +96,25 @@ const Index = () => {
 
     const getCustomersList = () => {
         if (isLoading) return
-
-        axios(
-            `/api/customers?page=${currentPage}&limit=${currentLimit}&sort=${currentSort}&search=${search}`
+        let usp = new URLSearchParams(
+            `page=${currentPage}&limit=${currentLimit}&sort=${currentSort}`,
         )
+        if (search) {
+            usp.append('search', search)
+        }
+        if (custName) {
+            usp.append('name', custName)
+        }
+        if (custEmail) {
+            usp.append('email', custEmail)
+        }
+        if (custName) {
+            usp.append('name', custName)
+        }
+        if (custIc) {
+            usp.append('ic', custIc)
+        }
+        axios(`/api/customers?page=` + usp.toString())
             .then(res => {
                 setData(res.data.data)
                 setCurrentLastPage(res.data.meta.last_page)
@@ -55,20 +126,28 @@ const Index = () => {
                 setLoading(false)
             })
     }
-    const onSearchChange = (event) => {
+    const onSearchChange = event => {
         setSearch(event.target.value)
     }
 
-    const handleSearchSubmit = (event) => {
+    const handleSearchSubmit = event => {
         event.preventDefault()
         getCustomersList()
+    }
+
+    const onAdvancedClick = event => {
+        if (event.target.checked) {
+            setSearch('')
+            setCustName('')
+            setCustEmail('')
+            setCustIc('')
+        }
+        setAdvanced(event.target.checked)
     }
 
     useEffect(() => {
         getCustomersList()
     }, [currentPage, currentLimit, currentSort, currentLastPage])
-
-    if (isLoading) return <p>Loading...</p>
 
     const pageLinks = []
     for (let i = 1; i <= currentLastPage; i++) {
@@ -96,9 +175,9 @@ const Index = () => {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 bg-white border-b border-gray-200">
-                            <div className="flex items-center">
-                                <form className="flex items-center" onSubmit={handleSearchSubmit}>
+                        <div className="p-12 bg-white border-b border-gray-200">
+                            <form onSubmit={handleSearchSubmit}>
+                                <div className="flex">
                                     <div className="mr-4">
                                         <Label htmlFor="sort">Sort</Label>
 
@@ -127,13 +206,46 @@ const Index = () => {
                                         </select>
                                     </div>
                                     <div>
-                                        <Label htmlFor="simple-search">Search</Label>
-                                        <input className="mr-4" type="text" id="search" placeholder="Search (minimum 4 letters)" value={search} onChange={onSearchChange} minLength="4"/>
-                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"> Search</button>
+                                        <Label htmlFor="simple-search">
+                                            Search
+                                        </Label>
+                                        <input
+                                            className="mr-4"
+                                            type="text"
+                                            id="search"
+                                            placeholder="Search (minimum 4 letters)"
+                                            value={search}
+                                            onChange={onSearchChange}
+                                            minLength="4"
+                                            autoComplete="off"
+                                        />
+                                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">
+                                            {' '}
+                                            Search
+                                        </button>
+                                        <input
+                                            type="checkbox"
+                                            name="advanced"
+                                            value={advanced}
+                                            onClick={onAdvancedClick}
+                                        />
                                     </div>
-                                </form>
-                            </div>
-                            <Customer data={data} loading={isLoading}></Customer>
+                                </div>
+                                {advanced ? (
+                                    <AdvanceForm
+                                        custName={custName}
+                                        setCustName={setCustName}
+                                        custEmail={custEmail}
+                                        setCustEmail={setCustEmail}
+                                        custIc={custIc}
+                                        setCustIc={setCustIc}
+                                    />
+                                ) : null}
+                            </form>
+
+                            <Customer
+                                data={data}
+                                loading={isLoading}></Customer>
 
                             <div>
                                 <h2>Pages</h2>
