@@ -3,22 +3,15 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import Label from '@/components/Label'
 import axios from '@/lib/axios'
+import CustomerTable from '@/components/CustomerTable'
 
-function Customer(props) {
-    const data = props.data || []
-    if (props.isLoading) return 'Loading...'
-    if (data.length === 0) return 'Empty result.'
-    return (
-        <ul className="my-8">
-            {data.map(customer => (
-                <li key={customer.id}>
-                    {customer.id} - {customer.name}
-                </li>
-            ))}
-        </ul>
-    )
-}
-const AdvanceInputText = ({ label, data, setData, type = 'text', id=null }) => {
+const AdvanceInputText = ({
+    label,
+    data,
+    setData,
+    type = 'text',
+    id = null,
+}) => {
     const handleChange = event => {
         if (setData) setData(event.target.value)
     }
@@ -30,7 +23,7 @@ const AdvanceInputText = ({ label, data, setData, type = 'text', id=null }) => {
                 value={data}
                 onChange={handleChange}
                 autoComplete="off"
-                id={id?id:null}
+                id={id ? id : null}
             />
         </div>
     )
@@ -114,7 +107,7 @@ const Index = () => {
         if (custIc) {
             usp.append('ic', custIc)
         }
-        axios(`/api/customers?page=` + usp.toString())
+        axios(`/api/customers?` + usp.toString())
             .then(res => {
                 setData(res.data.data)
                 setCurrentLastPage(res.data.meta.last_page)
@@ -154,6 +147,7 @@ const Index = () => {
         pageLinks.push(
             <li
                 key={i}
+                id={'page-link-' + i}
                 className="mr-2 cursor-pointer"
                 onClick={() => onPageChangeHandler(i)}>
                 {i}
@@ -243,9 +237,9 @@ const Index = () => {
                                 ) : null}
                             </form>
 
-                            <Customer
+                            <CustomerTable
                                 data={data}
-                                loading={isLoading}></Customer>
+                                loading={isLoading}></CustomerTable>
 
                             <div>
                                 <h2>Pages</h2>
