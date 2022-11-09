@@ -11,7 +11,7 @@ import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
 import * as React from 'react';
 import MyCombobox from '@/components/MyCombobox'
-import IcCheckingInputs from '@/components/IcCheckingInputs'
+import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 
 const Create = () => {
     const router = useRouter()
