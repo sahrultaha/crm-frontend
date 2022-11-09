@@ -1,6 +1,7 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import Button from '@/components/Button'
 import axios from '@/lib/axios'
 import React, { useState, useEffect } from 'react'
 
@@ -9,6 +10,10 @@ const Show = () => {
     const { id } = router.query
     const [data, setData] = useState(null)
     const [icUrls, setIcUrls] = useState([])
+
+    function handleClick() {
+        router.push(`/customers/update?id=${id}`)
+      }
 
     useEffect(() => {
         if (!router.isReady) return
@@ -30,6 +35,7 @@ const Show = () => {
         }
 
         try {
+            console.log(data)
             for (const fileId of data.file_ids) {
                 const resp = await axios.get(`/api/files/${fileId}`)
                 setIcUrls(prevState => [
@@ -125,6 +131,11 @@ const Show = () => {
                                 />
                             ))}
                         </div>
+                        <div className="p-6 bg-white border-b border-gray-200">
+                        <div className="flex items-center justify-end mt-4">
+                        <Button className="ml-4" onClick={handleClick}>Edit</Button>
+                    </div>
+                    </div>
                     </div>
                 </div>
             </div>
