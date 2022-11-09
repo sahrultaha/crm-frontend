@@ -9,8 +9,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
-import * as React from 'react';
-import MyCombobox from '@/components/MyCombobox'
+import * as React from 'react'
+import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 
 const Create = () => {
@@ -27,17 +27,8 @@ const Create = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
-    const [district, setDistrict] = useState('-----')
-    const [mukim, setMukim] = useState('-----')
-    const [village, setVillage] = useState('')
-    const [postalcode, setPostalCode] = useState('')
-    const [house_number, setHouseNumber] = useState('')
-    const [simpang, setSimpang] = useState('')
-    const [street, setStreet] = useState('')
-    const [building_name, setBuildingName] = useState('')
-    const [block, setBlock] = useState('')
-    const [floor, setFloor] = useState('')
-    const [unit, setUnit] = useState('')
+    const [address, setAddress] = useState(null)
+
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
@@ -53,37 +44,16 @@ const Create = () => {
     const onIcExpiryDateChangeHandler = event =>
         setIcExpiryDate(event.target.value.trim())
     const onCountryIdChangeHandler = event => setCountryId(event.target.value)
-    const onCustomerTitleIdChangeHandler = event => setCustomerTitleId(event.target.value)
-    const onAccountCategoryIdChangeHandler = event => setAccountCategoryId(event.target.value)
-    const onBirthDateChangeHandler = event => setBirthDate(event.target.value.trim())
-    const onHouseNumberChangeHandler = event => setHouseNumber(event.target.value.trim())
-    const onSimpangChangeHandler = event => setSimpang(event.target.value.trim())
-    const onStreetChangeHandler = event => setStreet(event.target.value.trim())
-    const onBuildingNameChangeHandler = event => setBuildingName(event.target.value.trim())
-    const onBlockChangeHandler = event => setBlock(event.target.value.trim())
-    const onFloorChangeHandler = event => setFloor(event.target.value.trim())
-    const onUnitChangeHandler = event => setUnit(event.target.value.trim())
-    
-    const onPostalCodeChangeHandler =  event => setPostalCode(event.target.value.trim())
-    
-    const onVillageSelected = value => {
-        
-        setVillage(value.name)
-        setMukim(value.mukim.name)
-        setDistrict(value.mukim.district.name);
-
-        if (value.id != ''){
-            axios
-                .get(`/api/postalcode?search=${value.id}`)
-                .then(res => {
-                    setPostalCode(res.data[0].name)
-                })                
-                .catch(error=> {
-                    console.error(`Error: ${error}`)
-                })
-        }
-
+    const onCustomerTitleIdChangeHandler = event =>
+        setCustomerTitleId(event.target.value)
+    const onAccountCategoryIdChangeHandler = event =>
+        setAccountCategoryId(event.target.value)
+    const onBirthDateChangeHandler = event =>
+        setBirthDate(event.target.value.trim())
+    const onAddressChangeHandler = val => {
+        setAddress(val)
     }
+
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
 
@@ -99,32 +69,39 @@ const Create = () => {
             alert('No ic back provided')
         }
 
-        const response = await axios
-            .post('/api/customers', {
-                name: name,
-                email: email === '' ? null : email,
-                mobile_number: mobileNumber === '' ? null : mobileNumber,
-                ic_number: icNumber,
-                ic_type_id: icTypeId,
-                ic_color_id: icColorId === '' ? null : icColorId,
-                ic_expiry_date: icExpiryDate,
-                country_id: countryId,
-                customer_title_id:
-                    customerTitleId === '' ? null : customerTitleId,
-                account_category_id: accountCategoryId,
-                birth_date: birthDate,
-                village: village,
-                district: district,
-                mukim: mukim,
-                postalcode: postalcode,
-                house_number: house_number,
-                simpang: simpang,
-                street: street,
-                building_name: building_name,
-                block: block,
-                floor: floor,
-                unit: unit,
-            })
+        const data = {
+            name: name,
+            email: email === '' ? null : email,
+            mobile_number: mobileNumber === '' ? null : mobileNumber,
+            ic_number: icNumber,
+            ic_type_id: icTypeId,
+            ic_color_id: icColorId === '' ? null : icColorId,
+            ic_expiry_date: icExpiryDate,
+            country_id: countryId,
+            customer_title_id: customerTitleId === '' ? null : customerTitleId,
+            account_category_id: accountCategoryId,
+            birth_date: birthDate,
+        }
+
+        if (address !== null) {
+            data = {
+                ...data,
+                village: address.village,
+                district: address.district,
+                mukim: address.mukim,
+                postalcode: address.postalCode,
+                house_number: address.houseNumber,
+                simpang: address.simpang,
+                street: address.street,
+                building_name: address.buildingName,
+                block: address.block,
+                floor: address.floor,
+                unit: address.unit,
+            }
+        }
+
+        await axios
+            .post('/api/customers', data)
             .then(async res => {
                 const id = res.data.id
 
@@ -184,7 +161,6 @@ const Create = () => {
                 console.log(error.config)
             })
     }
-
 
     return (
         <GuestLayout>
@@ -249,10 +225,11 @@ const Create = () => {
                         />
                     </div>
 
-                    <IcCheckingInputs 
+                    <IcCheckingInputs
                         onIcNumberChange={onIcNumberChangeHandler}
                         onIcTypeIdChange={onIcTypeIdChangeHandler}
-                        onCustomerChange={onExistingCustomerHandler}/>
+                        onCustomerChange={onExistingCustomerHandler}
+                    />
 
                     <div className="mt-4">
                         <Label htmlFor="icColorId">Ic Color (Optional)</Label>
@@ -374,183 +351,11 @@ const Create = () => {
                         />
                     </div>
 
-                    <div className="mt-4">
-                        <Label htmlFor="addressLabel">
-                            Kampung
-                        </Label>
+                    <AddressInputs
+                        onAddressChange={onAddressChangeHandler}
+                        errors={errors}
+                    />
 
-                        <div className="mt-4">
-                            <MyCombobox onSelected={onVillageSelected}/>
-                        </div>
-
-
-                        <div className="mt-4">
-                            <Label htmlFor="districtId">
-                                District
-                            </Label>
-
-                            <Label>{district}</Label>
-
-                            <InputError
-                                messages={errors.districtId}
-                                className="mt-2"
-                            />
-                        </div>
-                        
-                        <div className="mt-4">
-                            <Label htmlFor="mukimId">
-                                Mukim
-                            </Label>
-
-                            <Label>{mukim}</Label>
-
-                            <InputError
-                                messages={errors.mukimId}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className='mt-4'>
-                            <Label htmlFor="postal_code_id">
-                                Postal Code
-                            </Label>
-
-                            <Input
-                                id="postal_code_id"
-                                type="text"
-                                value={postalcode}
-                                className="block mt-1 w-full"
-                                onChange={onPostalCodeChangeHandler}
-                            />
-
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="house_number">House Number</Label>
-
-                            <Input
-                                id="house_number"
-                                type="text"
-                                value={house_number}
-                                placeholder="e.g. No 10"
-                                className="block mt-1 w-full"
-                                onChange={onHouseNumberChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.house_number}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="simpang">Simpang</Label>
-
-                            <Input
-                                id="simpang"
-                                type="text"
-                                value={simpang}
-                                placeholder="e.g. Simpang 51-1"
-                                className="block mt-1 w-full"
-                                onChange={onSimpangChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.simpang}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="street">Street</Label>
-
-                            <Input
-                                id="street"
-                                type="text"
-                                value={street}
-                                className="block mt-1 w-full"
-                                placeholder="e.g. Jalan Pasir Berakas"
-                                onChange={onStreetChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.street}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="building_name">Building Name</Label>
-
-                            <Input
-                                id="building_name"
-                                type="text"
-                                value={building_name}
-                                className="block mt-1 w-full"
-                                placeholder="e.g. 118 Residence"
-                                onChange={onBuildingNameChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.building_name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="block">Block</Label>
-
-                            <Input
-                                id="block"
-                                type="text"
-                                value={block}
-                                placeholder="e.g. Block B"
-                                className="block mt-1 w-full"
-                                onChange={onBlockChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.block}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="floor">Floor</Label>
-
-                            <Input
-                                id="floor"
-                                type="text"
-                                value={floor}
-                                placeholder="e.g. 1st Floor"
-                                className="block mt-1 w-full"
-                                onChange={onFloorChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.floor}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <Label htmlFor="unit">Unit</Label>
-
-                            <Input
-                                id="unit"
-                                type="text"
-                                value={unit}
-                                className="block mt-1 w-full"
-                                placeholder="e.g. Unit 2A"
-                                onChange={onUnitChangeHandler}
-                            />
-
-                            <InputError
-                                messages={errors.unit}
-                                className="mt-2"
-                            />
-                        </div>
-                    </div> 
                     <div className="mt-4">
                         <Label htmlFor="icFront">Ic Front</Label>
 
