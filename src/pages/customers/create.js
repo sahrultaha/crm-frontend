@@ -40,6 +40,10 @@ const Create = () => {
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
     const [checkIcExist, setIcCheckExist] = useState(null)
+    const [district_id, setDistrictId] = useState('-----')
+    const [mukim_id, setMukimId] = useState('-----')
+    const [village_id, setVillageId] = useState('')
+    const [postal_code_id, setPostalCodeId] = useState('')
 
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
@@ -103,6 +107,10 @@ const Create = () => {
     const onPostalCodeChangeHandler =  event => setPostalCode(event.target.value.trim())
     
     const onVillageSelected = value => {
+
+        setVillageId(value.id)
+        setMukimId(value.mukim.id)
+        setDistrictId(value.mukim.district.id)
         setVillage(value.name)
         setMukim(value.mukim.name)
         setDistrict(value.mukim.district.name);
@@ -111,16 +119,15 @@ const Create = () => {
                 .get(`/api/postalcode?search=${value.id}`)
                 .then(res => {
                     setPostalCode(res.data[0].name)
+                    setPostalCodeId(res.data[0].id)
                 })                
                 .catch(error=> {
                     console.error(`Error: ${error}`)
                 })
         }
     }
-    
-    const onCustomerTitleIdChangeHandler = event => setCustomerTitleId(event.target.value)
-    const onAccountCategoryIdChangeHandler = event => setAccountCategoryId(event.target.value)
-    const onBirthDateChangeHandler = event => setBirthDate(event.target.value.trim())
+
+
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
 
@@ -150,10 +157,10 @@ const Create = () => {
                     customerTitleId === '' ? null : customerTitleId,
                 account_category_id: accountCategoryId,
                 birth_date: birthDate,
-                village: village,
-                district: district,
-                mukim: mukim,
-                postalcode: postalcode,
+                village_id: village_id,
+                district_id: district_id,
+                mukim_id: mukim_id,
+                postal_code_id: postal_code_id,
                 house_number: house_number,
                 simpang: simpang,
                 street: street,
