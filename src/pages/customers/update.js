@@ -1,4 +1,3 @@
-import ApplicationLogo from '@/components/ApplicationLogo'
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
 import AuthCard from '@/components/AuthCard'
