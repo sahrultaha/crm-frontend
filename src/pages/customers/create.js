@@ -18,11 +18,8 @@ const Create = () => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
-    const [icNumber, setIcNumber] = useState('')
-    const [icTypeId, setIcTypeId] = useState('')
-    const [existingCustomer, setExistingCustomer] = useState('')
-    const [icColorId, setIcColorId] = useState('')
-    const [icExpiryDate, setIcExpiryDate] = useState('')
+    const [existingCustomer, setExistingCustomer] = useState(null)
+    const [icDetails, setIcDetails] = useState(null)
     const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
@@ -33,16 +30,12 @@ const Create = () => {
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
 
-    const onIcNumberChangeHandler = val => setIcNumber(val)
-    const onIcTypeIdChangeHandler = val => setIcTypeId(val)
     const onExistingCustomerHandler = val => setExistingCustomer(val)
+    const onIcDetailsChangeHandler = val => setIcDetails(val)
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
-    const onIcColorIdChangeHandler = event => setIcColorId(event.target.value)
-    const onIcExpiryDateChangeHandler = event =>
-        setIcExpiryDate(event.target.value.trim())
     const onCountryIdChangeHandler = event => setCountryId(event.target.value)
     const onCustomerTitleIdChangeHandler = event =>
         setCustomerTitleId(event.target.value)
@@ -73,14 +66,20 @@ const Create = () => {
             name: name,
             email: email === '' ? null : email,
             mobile_number: mobileNumber === '' ? null : mobileNumber,
-            ic_number: icNumber,
-            ic_type_id: icTypeId,
-            ic_color_id: icColorId === '' ? null : icColorId,
-            ic_expiry_date: icExpiryDate,
             country_id: countryId,
             customer_title_id: customerTitleId === '' ? null : customerTitleId,
             account_category_id: accountCategoryId,
             birth_date: birthDate,
+        }
+
+        if (icDetails !== null) {
+            data = {
+                ...data,
+                ic_number: icDetails.icNumber ?? '',
+                ic_type_id: icDetails.icTypeId ?? '',
+                ic_color_id: icDetails.icColorId ?? '',
+                ic_expiry_date: icDetails.icExpiryDate ?? '',
+            }
         }
 
         if (address !== null) {
@@ -226,47 +225,9 @@ const Create = () => {
                     </div>
 
                     <IcCheckingInputs
-                        onIcNumberChange={onIcNumberChangeHandler}
-                        onIcTypeIdChange={onIcTypeIdChangeHandler}
+                        onIcDetailsChange={onIcDetailsChangeHandler}
                         onCustomerChange={onExistingCustomerHandler}
                     />
-
-                    <div className="mt-4">
-                        <Label htmlFor="icColorId">Ic Color (Optional)</Label>
-
-                        <select
-                            id="icColorId"
-                            value={icColorId}
-                            onChange={onIcColorIdChangeHandler}>
-                            <option value="">Select One</option>
-                            <option value={1}>Yellow</option>
-                            <option value={2}>Green</option>
-                            <option value={3}>Purple</option>
-                        </select>
-
-                        <InputError
-                            messages={errors.ic_color_id}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="mt-4">
-                        <Label htmlFor="icExpiryDate">Ic Expiry Date</Label>
-
-                        <Input
-                            id="icExpiryDate"
-                            type="date"
-                            value={icExpiryDate}
-                            className="block mt-1 w-full"
-                            required
-                            onChange={onIcExpiryDateChangeHandler}
-                        />
-
-                        <InputError
-                            messages={errors.ic_expiry_date}
-                            className="mt-2"
-                        />
-                    </div>
 
                     <div className="mt-4">
                         <Label htmlFor="countryId">Country</Label>
