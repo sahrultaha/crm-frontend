@@ -6,25 +6,22 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect} from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 
-const UpdateCusomter = () => {
-    
+const Update = () => {
     const router = useRouter()
     const [data, setData] = useState(null)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
-    const [icNumber, setIcNumber] = useState('')
-    const [icTypeId, setIcTypeId] = useState('')
-    const [existingCustomer, setExistingCustomer] = useState('')
-    const [icColorId, setIcColorId] = useState('')
-    const [icExpiryDate, setIcExpiryDate] = useState('')
+    const [existingCustomer, setExistingCustomer] = useState(null)
+    const [icDetails, setIcDetails] = useState(null)
+    const [custICNumber,setIcNumber] = useState('')
     const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
@@ -34,18 +31,13 @@ const UpdateCusomter = () => {
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
-    const [icUrls, setIcUrls] = useState([])
 
-    const onIcNumberChangeHandler = val => setIcNumber(val)
-    const onIcTypeIdChangeHandler = val => setIcTypeId(val)
     const onExistingCustomerHandler = val => setExistingCustomer(val)
+    const onIcDetailsChangeHandler = val => setIcDetails(val)
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
         setMobileNumber(event.target.value.trim())
-    const onIcColorIdChangeHandler = event => setIcColorId(event.target.value)
-    const onIcExpiryDateChangeHandler = event =>
-        setIcExpiryDate(event.target.value.trim())
     const onCountryIdChangeHandler = event => setCountryId(event.target.value)
     const onCustomerTitleIdChangeHandler = event =>
         setCustomerTitleId(event.target.value)
@@ -59,6 +51,7 @@ const UpdateCusomter = () => {
 
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
+
 
     useEffect(() => {
         if (!router.isReady) return
@@ -75,8 +68,8 @@ const UpdateCusomter = () => {
                 setIcNumber(res.data['ic_number'])
                 setIcTypeId(res.data['ic_type_id'])
     
-                setIcNumberOrig(res.data['ic_number'])
-                setIcTypeIdOrig(res.data['ic_type_id'])
+                // setIcNumberOrig(res.data['ic_number'])
+                // setIcTypeIdOrig(res.data['ic_type_id'])
     
                 setIcColorId(res.data['ic_color_id'] ?? "")
                 setIcExpiryDate(res.data['ic_expiry_date'])
@@ -94,35 +87,8 @@ const UpdateCusomter = () => {
             })
     }, [router.isReady])
     
-    
-    useEffect(async () => {
-        if (!data) {
-            console.log("The data is :" + data)
-            console.log('no data, abort fetching images...')
-            return
-        }
-        try {
-            console.log("image files:", data.file_ids[0])
-    
-            for (const fileId of data.file_ids) {
-    
-                const resp = await axios.get(`/api/files/${fileId}`)
-                setIcUrls(prevState => [
-    
-                    ...prevState,
-                    {
-                        id: fileId,
-                        url: resp.data.url,
-                    },
-                ])
-            }
-        } catch (e) {
-            console.log('Error getting file urls...', e)
-        }
-    }, [data])
 
-
-    const submitForm = async event => {
+    const updateForm = async event => {
         event.preventDefault()
 
         // TODO: validation
@@ -138,14 +104,20 @@ const UpdateCusomter = () => {
             name: name,
             email: email === '' ? null : email,
             mobile_number: mobileNumber === '' ? null : mobileNumber,
-            ic_number: icNumber,
-            ic_type_id: icTypeId,
-            ic_color_id: icColorId === '' ? null : icColorId,
-            ic_expiry_date: icExpiryDate,
             country_id: countryId,
             customer_title_id: customerTitleId === '' ? null : customerTitleId,
             account_category_id: accountCategoryId,
             birth_date: birthDate,
+        }
+
+        if (icDetails !== null) {
+            data = {
+                ...data,
+                ic_number: icDetails.icNumber ?? '',
+                ic_type_id: icDetails.icTypeId ?? '',
+                ic_color_id: icDetails.icColorId ?? '',
+                ic_expiry_date: icDetails.icExpiryDate ?? '',
+            }
         }
 
         if (address !== null) {
@@ -237,7 +209,7 @@ const UpdateCusomter = () => {
                         </a>
                     </Link>
                 }>
-                <form onSubmit={submitForm}>
+                <form onSubmit={updateForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
 
@@ -289,49 +261,12 @@ const UpdateCusomter = () => {
                             className="mt-2"
                         />
                     </div>
-
+                  
                     <IcCheckingInputs
-                        onIcNumberChange={onIcNumberChangeHandler}
-                        onIcTypeIdChange={onIcTypeIdChangeHandler}
+                        onIcDetailsChange={onIcDetailsChangeHandler}
                         onCustomerChange={onExistingCustomerHandler}
+                        currentIcNumber={ custICNumber }
                     />
-
-                    <div className="mt-4">
-                        <Label htmlFor="icColorId">Ic Color (Optional)</Label>
-
-                        <select
-                            id="icColorId"
-                            value={icColorId}
-                            onChange={onIcColorIdChangeHandler}>
-                            <option value="">Select One</option>
-                            <option value={1}>Yellow</option>
-                            <option value={2}>Green</option>
-                            <option value={3}>Purple</option>
-                        </select>
-
-                        <InputError
-                            messages={errors.ic_color_id}
-                            className="mt-2"
-                        />
-                    </div>
-
-                    <div className="mt-4">
-                        <Label htmlFor="icExpiryDate">Ic Expiry Date</Label>
-
-                        <Input
-                            id="icExpiryDate"
-                            type="date"
-                            value={icExpiryDate}
-                            className="block mt-1 w-full"
-                            required
-                            onChange={onIcExpiryDateChangeHandler}
-                        />
-
-                        <InputError
-                            messages={errors.ic_expiry_date}
-                            className="mt-2"
-                        />
-                    </div>
 
                     <div className="mt-4">
                         <Label htmlFor="countryId">Country</Label>
@@ -444,17 +379,9 @@ const UpdateCusomter = () => {
                             onChange={onIcBackChangeHandler}
                         />
                     </div>
-                    <div className="p-6 bg-white border-b border-gray-200">
-                        {icUrls.map(obj => (
-                            <img
-                                key={obj.id}
-                                src={obj.url}
-                                className="inline-block w-20 h-20 mr-4"
-                            />
-                        ))}
-                    </div>
+
                     <div className="flex items-center justify-end mt-4">
-                        <Button className="ml-4">Update</Button>
+                        <Button className="ml-4">Create</Button>
                     </div>
                 </form>
             </AuthCard>
@@ -462,4 +389,4 @@ const UpdateCusomter = () => {
     )
 }
 
-export default UpdateCusomter
+export default Update
