@@ -1,35 +1,27 @@
 import Input from '@/components/Input'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 
 const IcCheckingInputs = ({
-    onIcDetailsChange,
+    icNumber,
+    icTypeId,
+    icColorId,
+    icExpiryDate,
+    setIcNumber,
+    setIcTypeId,
+    setIcColorId,
+    setIcExpiryDate,
     onCustomerChange,
-    currentIcNumber = '',
-    currentIcTypeId = '',
-    currentIcColorId = '',
-    currentIcExpiryDate = '',
     ...props
 }) => {
-    const defaultIcDetails = {
-        icNumber: '',
-        icTypeId: '',
-        icColorId: '',
-        icExpiryDate: '',
-    }
-    const [icNumber, setIcNumber] = useState(currentIcNumber)
-    const [icTypeId, setIcTypeId] = useState(currentIcTypeId)
-    const [icColorId, setIcColorId] = useState(currentIcColorId)
-    const [icExpiryDate, setIcExpiryDate] = useState(currentIcExpiryDate)
-    const [icDetails, setIcDetails] = useState(defaultIcDetails)
+    
     const [customer, setCustomer] = useState(null)
-    const icNumberRef = useRef()
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (icNumberRef.current.value === '' || icTypeId === '') {
+            if (icNumber === '' || icTypeId === '') {
                 console.log('ic number or ic type id is empty...')
                 return
             }
@@ -37,7 +29,7 @@ const IcCheckingInputs = ({
             const endpoint = '/api/customers/search?'
             const queryString = new URLSearchParams('ic_number&ic_type_id')
 
-            queryString.set('ic_number', icNumberRef.current.value)
+            queryString.set('ic_number', icNumber)
             queryString.set('ic_type_id', icTypeId)
 
             axios
@@ -50,7 +42,6 @@ const IcCheckingInputs = ({
                         setIcTypeId('')
                         setIcColorId('')
                         setIcExpiryDate('')
-                        setIcDetails(defaultIcDetails)
 
                         return
                     }
@@ -60,11 +51,7 @@ const IcCheckingInputs = ({
         }, 500)
 
         return () => clearTimeout(timer)
-    }, [icNumber, icTypeId, defaultIcDetails])
-
-    useEffect(() => {
-        onIcDetailsChange({ ...icDetails })
-    }, [icDetails])
+    }, [icNumber, icTypeId])
 
     useEffect(() => {
         onCustomerChange({ ...customer })
@@ -74,7 +61,6 @@ const IcCheckingInputs = ({
         const value = event.target.value.trim()
 
         setIcNumber(value)
-        setIcDetails(prevDetails => ({ ...prevDetails, icNumber: value }))
         setCustomer(null)
     }
 
@@ -82,20 +68,17 @@ const IcCheckingInputs = ({
         const value = event.target.value.trim()
 
         setIcTypeId(value)
-        setIcDetails(prevDetails => ({ ...prevDetails, icTypeId: value }))
         setCustomer(null)
     }
 
     const onIcColorIdChangeHandler = event => {
         const value = event.target.value.trim()
         setIcColorId(value)
-        setIcDetails(prevDetails => ({ ...prevDetails, icColorId: value }))
     }
 
     const onIcExpiryDateChangeHandler = event => {
         const value = event.target.value.trim()
         setIcExpiryDate(value)
-        setIcDetails(prevDetails => ({ ...prevDetails, icExpiryDate: value }))
     }
 
     let message = null
@@ -122,7 +105,6 @@ const IcCheckingInputs = ({
 
                     <Input
                         id="icNumber"
-                        ref={icNumberRef}
                         type="text"
                         value={icNumber}
                         placeholder="01234567"
