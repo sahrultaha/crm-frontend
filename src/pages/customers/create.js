@@ -6,12 +6,15 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
+import AppLayout from '@/components/Layouts/AppLayout'
+import MainBody from '@/components/MainBody'
+import Head from 'next/head'
 
 const Create = () => {
     const router = useRouter()
@@ -19,7 +22,10 @@ const Create = () => {
     const [email, setEmail] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
     const [existingCustomer, setExistingCustomer] = useState(null)
-    const [icDetails, setIcDetails] = useState(null)
+    const [icNumber, setIcNumber] = useState('')
+    const [icTypeId, setIcTypeId] = useState('')
+    const [icColorId, setIcColorId] = useState('')
+    const [icExpiryDate, setIcExpiryDate] = useState('')
     const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
@@ -31,7 +37,6 @@ const Create = () => {
     const [errors, setErrors] = useState([])
 
     const onExistingCustomerHandler = val => setExistingCustomer(val)
-    const onIcDetailsChangeHandler = val => setIcDetails(val)
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
@@ -46,6 +51,14 @@ const Create = () => {
     const onAddressChangeHandler = val => {
         setAddress(val)
     }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIcNumber('00000009')
+            setIcTypeId('1')
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [])
 
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
@@ -70,16 +83,10 @@ const Create = () => {
             customer_title_id: customerTitleId === '' ? null : customerTitleId,
             account_category_id: accountCategoryId,
             birth_date: birthDate,
-        }
-
-        if (icDetails !== null) {
-            data = {
-                ...data,
-                ic_number: icDetails.icNumber ?? '',
-                ic_type_id: icDetails.icTypeId ?? '',
-                ic_color_id: icDetails.icColorId ?? '',
-                ic_expiry_date: icDetails.icExpiryDate ?? '',
-            }
+            ic_number: icNumber ?? '',
+            ic_type_id: icTypeId ?? '',
+            ic_color_id: icColorId ?? '',
+            ic_expiry_date: icExpiryDate ?? '',
         }
 
         if (address !== null) {
@@ -162,16 +169,17 @@ const Create = () => {
     }
 
     return (
-        <GuestLayout>
-            <AuthCard
-                logo={
-                    <Link href="/">
-                        <a>
-                            <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                        </a>
-                    </Link>
-                }>
-                <form onSubmit={submitForm}>
+        <AppLayout
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Create Customer
+                </h2>
+            }>
+            <Head>
+                <title>Create Customer</title>
+            </Head>
+            <MainBody>
+                <form className='mx-auto max-w-screen-sm' onSubmit={submitForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
 
@@ -225,8 +233,15 @@ const Create = () => {
                     </div>
 
                     <IcCheckingInputs
-                        onIcDetailsChange={onIcDetailsChangeHandler}
                         onCustomerChange={onExistingCustomerHandler}
+                        icNumber={icNumber}
+                        icTypeId={icTypeId}
+                        icColorId={icColorId}
+                        icExpiryDate={icExpiryDate}
+                        setIcNumber={setIcNumber}
+                        setIcTypeId={setIcTypeId}
+                        setIcColorId={setIcColorId}
+                        setIcExpiryDate={setIcExpiryDate}
                     />
 
                     <div className="mt-4">
@@ -345,8 +360,8 @@ const Create = () => {
                         <Button className="ml-4">Create</Button>
                     </div>
                 </form>
-            </AuthCard>
-        </GuestLayout>
+            </MainBody>
+        </AppLayout>
     )
 }
 
