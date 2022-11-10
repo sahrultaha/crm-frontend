@@ -34,7 +34,7 @@ const MyCombobox = (props) => {
         
     return (
         <Combobox value={selectedData} onChange={setSelectedDataHandler}>
-            <Combobox.Input displayValue={(village) => village.name} value={search} onChange={searchHandler}/>
+            <Combobox.Input className='w-full' displayValue={(village) => village.name} value={search} onChange={searchHandler}/>
                 <Combobox.Options>
                     {filteredData.map((village) => (
                         <Combobox.Option key={village.id} value={village}>
