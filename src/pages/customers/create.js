@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { useState } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
-import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 

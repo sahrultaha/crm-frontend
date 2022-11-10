@@ -5,7 +5,7 @@ import axios from '@/lib/axios'
 const VillageComboBox = ({ village, onVillageChange }) => {
     const [data, setData] = useState([])
     const [search, setSearch] = useState(village.name)
-    const [selectedData, setSelectedData] = useState('')
+    const [selectedData, setSelectedData] = useState(village)
 
 
     const setSelectedDataHandler = value => {
