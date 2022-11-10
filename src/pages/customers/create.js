@@ -12,6 +12,9 @@ import { useRouter } from 'next/router'
 import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
+import AppLayout from '@/components/Layouts/AppLayout'
+import MainBody from '@/components/MainBody'
+import Head from 'next/head'
 
 const Create = () => {
     const router = useRouter()
@@ -166,16 +169,17 @@ const Create = () => {
     }
 
     return (
-        <GuestLayout>
-            <AuthCard
-                logo={
-                    <Link href="/">
-                        <a>
-                            <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                        </a>
-                    </Link>
-                }>
-                <form onSubmit={submitForm}>
+        <AppLayout
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Create Customer
+                </h2>
+            }>
+            <Head>
+                <title>Create Customer</title>
+            </Head>
+            <MainBody>
+                <form className='mx-auto max-w-screen-sm' onSubmit={submitForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
 
@@ -356,8 +360,8 @@ const Create = () => {
                         <Button className="ml-4">Create</Button>
                     </div>
                 </form>
-            </AuthCard>
-        </GuestLayout>
+            </MainBody>
+        </AppLayout>
     )
 }
 
