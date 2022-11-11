@@ -38,6 +38,13 @@ const Navigation = ({ user }) => {
                                 Customers
                             </NavLink>
                         </div>
+                        <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <NavLink
+                                href="/imsi"
+                                active={router.pathname === '/imsi'}>
+                                IMSI
+                            </NavLink>
+                        </div>
                     </div>
 
                     {/* Settings Dropdown */}
