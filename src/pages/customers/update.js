@@ -29,7 +29,11 @@ const Update = () => {
     const [IcTypeId, setIcTypeId] = useState('')
     const [IcColorId, setIcColorId] = useState('')
     const [IcExpiryDate, setIcExpiryDate] = useState('')
-    const [updateModeValue, setUpdateModeValue] = useState(true)
+    const [updateModeValue, setUpdateModeValue] = useState(false)
+
+
+    const [OriIcColorId, setOriIcColorId] = useState('')
+    const [OriIcExpiryDate, setOriIcExpiryDate] = useState('')
     const [IcNumberOrig, setIcNumberOrig] = useState('')
     const [IcTypeIdOrig, setIcTypeIdOrig] = useState('')
 
@@ -58,9 +62,9 @@ const Update = () => {
     const [icUrls, setIcUrls] = useState([])
 
     const onExistingCustomerHandler = val => {
-        console.log("chect",val)
         console.log(IcNumber, IcNumberOrig)
         console.log(IcTypeId, IcTypeIdOrig)
+        setUpdateModeValue(true)
         setExistingCustomer(val)
         
         console.log("trigger changes")
@@ -89,11 +93,11 @@ const Update = () => {
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
-        console.log("customer id : " + CustomerId)
+        // console.log("customer id : " + CustomerId)
 
         axios(`/api/customers/get?id=${CustomerId}`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setData(res.data)
                 setName(res.data['name'])
                 setEmail(res.data['email'] ?? "")
@@ -103,6 +107,10 @@ const Update = () => {
                 setIcTypeId(res.data['ic_type_id'])
                 setIcColorId(res.data['ic_color_id'] ?? "")
                 setIcExpiryDate(res.data['ic_expiry_date'])
+
+
+                setOriIcColorId(res.data['ic_color_id'] ?? "")
+                setOriIcExpiryDate(res.data['ic_expiry_date'])
 
                 setIcNumberOrig(res.data['ic_number'])
                 setIcTypeIdOrig(res.data['ic_type_id'])
@@ -129,7 +137,7 @@ const Update = () => {
         }
 
         try {
-            console.log(data)
+            // console.log(data)
             for (const fileId of data.file_ids) {
                 const resp = await axios.get(`/api/files/${fileId}`)
                 setIcUrls(prevState => [
@@ -148,6 +156,7 @@ const Update = () => {
     const updateForm = async event => {
         event.preventDefault()
         const { id: CustomerId } = router.query
+        console.log("clicked")
 
         // TODO: validation
         // if (icFront === '' || icFront === null) {
@@ -184,8 +193,6 @@ const Update = () => {
             unit: unit ?? '',
         }
 
-
-        console.log(data)
         await axios
             .put('/api/customers/update', data)
             .then(async res => {
@@ -204,34 +211,35 @@ const Update = () => {
                 icFrontFormData.append('relation_type_id', 1)
                 icFrontFormData.append('file_category_id', 1)
 
-
-
                 const icBackFormData = new FormData()
                 icBackFormData.append('file', icBack)
                 icBackFormData.append('relation_id', id)
                 icBackFormData.append('relation_type_id', 1)
                 icBackFormData.append('file_category_id', 1)
-
+           
                 try {
                     if (icFront != "" || icBack != "") {
-                        console.log(icFront + "testing")
-                        const responseIcFront = await axios.patch(
+                        console.log(icFrontFormData,"form data front")
+                        const responseIcFront = await axios.put(
                             '/api/files',
                             icFrontFormData,
                             headers,
+                            console.log(icFrontFormData + "testing front")
                         )
-                        const responseIcBack = await axios.patch(
+                        console.log(icBackFormData + "form data back")
+                        const responseIcBack = await axios.put(
                             '/api/files',
                             icBackFormData,
                             headers,
+                            console.log(icBackFormData + "testing back")
                         )
 
                         console.log('upload ok')
-                        console.log(responseIcFront)
-                        console.log(responseIcBack)
+                        console.log("Front",responseIcFront)
+                        console.log("Back",responseIcBack)
                         console.log("stdsadas")
                     }
-                    router.push(`/customers/${id}`)
+                    // router.push(`/customers/${id}`)
 
                 } catch (e) {
                     console.error('Failed to upload!')
@@ -253,6 +261,31 @@ const Update = () => {
                 }
                 console.log(error.config)
             })
+    }
+
+    if (data == null || data == ""){
+        return(
+
+            <AppLayout
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Update Customer Details
+                </h2>
+            }>
+            <Head>
+                <title>Update Customer Details</title>
+            </Head>
+            <div className="py-12">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="p-6 bg-white border-b border-gray-200">
+                                Invalid Customer ID
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </AppLayout>
+        )
     }
 
     return (
@@ -328,6 +361,8 @@ const Update = () => {
 
                         oriIcNumber={IcNumberOrig}
                         oriIcTypeId={IcTypeIdOrig}
+                        oriExpiryDate={OriIcExpiryDate}
+                        oriIcColorId={OriIcColorId}
 
                         setIcNumber={setIcNumber}
                         setIcTypeId={setIcTypeId}
