@@ -8,6 +8,10 @@ const AddressInputs = ({
     mukim,
     village,
     postalCode,
+    village_id,
+    district_id,
+    mukim_id,
+    postal_code_id,
     houseNumber,
     simpang,
     street,
@@ -19,6 +23,10 @@ const AddressInputs = ({
     setMukim,
     setVillage,
     setPostalCode,
+    setVillageId,
+    setDistrictId,
+    setMukimId,
+    setPostalCodeId,
     setHouseNumber,
     setSimpang,
     setStreet,
@@ -40,14 +48,19 @@ const AddressInputs = ({
 
     const onVillageChange = value => {
         setVillage(value.name)
+        setVillageId(value.id)
         setMukim(value.mukim.name)
+        setMukimId(value.mukim.id)
         setDistrict(value.mukim.district.name)
+        setDistrictId(value.mukim.district.id)
         if (value.id != '') {
             axios
                 .get(`/api/postalcode?search=${value.id}`)
                 .then(res => {
                     const newPostalCode = res.data[0].name
+                    const newPostalCodeId = res.data[0].id
                     setPostalCode(newPostalCode)
+                    setPostalCodeId(newPostalCodeId)
                 })
                 .catch(error => {
                     console.error(`Error: ${error}`)

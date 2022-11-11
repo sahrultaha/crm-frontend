@@ -46,8 +46,8 @@ const Create = () => {
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
     const [checkIcExist, setIcCheckExist] = useState(null)
-    const [district_id, setDistrictId] = useState('-----')
-    const [mukim_id, setMukimId] = useState('-----')
+    const [district_id, setDistrictId] = useState('')
+    const [mukim_id, setMukimId] = useState('')
     const [village_id, setVillageId] = useState('')
     const [postal_code_id, setPostalCodeId] = useState('')
 
@@ -91,10 +91,10 @@ const Create = () => {
             ic_type_id: icTypeId ?? '',
             ic_color_id: icColorId ?? '',
             ic_expiry_date: icExpiryDate ?? '',
-            village: village ?? '',
-            district: district ?? '',
-            mukim: mukim ?? '',
-            postalcode: postalCode ?? '',
+            village_id: village_id ?? '',
+            district_id: district_id ?? '',
+            mukim_id: mukim_id ?? '',
+            postal_code_id: postal_code_id ?? '',
             house_number: houseNumber ?? '',
             simpang: simpang ?? '',
             street: street ?? '',
@@ -330,6 +330,10 @@ const Create = () => {
                         mukim={mukim}
                         village={village}
                         postalCode={postalCode}
+                        village_id={village_id}
+                        district_id={district_id}
+                        mukim_id={mukim_id}
+                        postal_code_id={postal_code_id}
                         houseNumber={houseNumber}
                         simpang={simpang}
                         street={street}
@@ -341,6 +345,10 @@ const Create = () => {
                         setMukim={setMukim}
                         setVillage={setVillage}
                         setPostalCode={setPostalCode}
+                        setVillageId={setVillageId}
+                        setDistrictId={setDistrictId}
+                        setMukimId={setMukimId}
+                        setPostalCodeId={setPostalCodeId}
                         setHouseNumber={setHouseNumber}
                         setSimpang={setSimpang}
                         setStreet={setStreet}
