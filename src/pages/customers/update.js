@@ -6,7 +6,7 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
 import * as React from 'react'
@@ -20,8 +20,16 @@ const Update = () => {
     const [email, setEmail] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
     const [existingCustomer, setExistingCustomer] = useState(null)
-    const [icDetails, setIcDetails] = useState(null)
-    const [custICNumber,setIcNumber] = useState('')
+
+    const [IcNumber, setIcNumber] = useState('')
+    const [IcTypeId, setIcTypeId] = useState('')
+    const [IcColorId, setIcColorId] = useState('')
+    const [IcExpiryDate, setIcExpiryDate] = useState('')
+    const [updateModeAct, setUpdateModeAct] = useState(false)
+    const [IcNumberOrig, setIcNumberOrig] = useState('')
+    const [IcTypeIdOrig, setIcTypeIdOrig] = useState('')
+
+
     const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
@@ -31,9 +39,12 @@ const Update = () => {
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
+    const [icUrls, setIcUrls] = useState([])
 
-    const onExistingCustomerHandler = val => setExistingCustomer(val)
-    const onIcDetailsChangeHandler = val => setIcDetails(val)
+    const onExistingCustomerHandler = val => {
+        setExistingCustomer(val)
+    }
+
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
@@ -57,7 +68,7 @@ const Update = () => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
         console.log("customer id : " + CustomerId)
-    
+
         axios(`/api/customers/get?id=${CustomerId}`)
             .then(res => {
                 console.log(res.data)
@@ -65,42 +76,68 @@ const Update = () => {
                 setName(res.data['name'])
                 setEmail(res.data['email'] ?? "")
                 setMobileNumber(res.data['mobile_number'] ?? "")
+
                 setIcNumber(res.data['ic_number'])
                 setIcTypeId(res.data['ic_type_id'])
-    
-                // setIcNumberOrig(res.data['ic_number'])
-                // setIcTypeIdOrig(res.data['ic_type_id'])
-    
                 setIcColorId(res.data['ic_color_id'] ?? "")
                 setIcExpiryDate(res.data['ic_expiry_date'])
+
+                setIcNumberOrig(res.data['ic_number'])
+                setIcTypeIdOrig(res.data['ic_type_id'])
+
+
+
                 setCountryId(res.data['country_id'])
                 setCustomerTitleId(res.data['customer_title_id'] ?? "")
                 setAccountCategoryId(res.data['account_category_id'])
                 setBirthDate(res.data['birth_date'])
-    
+
             })
             .catch(error => {
                 // setData(null)
             })
             .finally(() => {
-    
+
             })
     }, [router.isReady])
-    
+    useEffect(async () => {
+        if (!data) {
+            console.log('no data, abort fetching images...')
+            return
+        }
+
+        try {
+            console.log(data)
+            for (const fileId of data.file_ids) {
+                const resp = await axios.get(`/api/files/${fileId}`)
+                setIcUrls(prevState => [
+                    ...prevState,
+                    {
+                        id: fileId,
+                        url: resp.data.url,
+                    },
+                ])
+            }
+        } catch (e) {
+            console.log('Error getting file urls...', e)
+        }
+    }, [data])
 
     const updateForm = async event => {
         event.preventDefault()
+        const { id: CustomerId } = router.query
 
         // TODO: validation
-        if (icFront === '' || icFront === null) {
-            alert('No ic front provided')
-        }
+        // if (icFront === '' || icFront === null) {
+        //     alert('No ic front provided')
+        // }
 
-        if (icBack === '' || icBack === null) {
-            alert('No ic back provided')
-        }
+        // if (icBack === '' || icBack === null) {
+        //     alert('No ic back provided')
+        // }
 
         const data = {
+            id:CustomerId,
             name: name,
             email: email === '' ? null : email,
             mobile_number: mobileNumber === '' ? null : mobileNumber,
@@ -108,16 +145,10 @@ const Update = () => {
             customer_title_id: customerTitleId === '' ? null : customerTitleId,
             account_category_id: accountCategoryId,
             birth_date: birthDate,
-        }
-
-        if (icDetails !== null) {
-            data = {
-                ...data,
-                ic_number: icDetails.icNumber ?? '',
-                ic_type_id: icDetails.icTypeId ?? '',
-                ic_color_id: icDetails.icColorId ?? '',
-                ic_expiry_date: icDetails.icExpiryDate ?? '',
-            }
+            ic_number: IcNumber ?? '',
+            ic_type_id: IcTypeId ?? '',
+            ic_color_id: IcColorId ?? '',
+            ic_expiry_date: IcExpiryDate ?? '',
         }
 
         if (address !== null) {
@@ -137,8 +168,9 @@ const Update = () => {
             }
         }
 
+        console.log(data)
         await axios
-            .post('/api/customers', data)
+            .put('/api/customers/update', data)
             .then(async res => {
                 const id = res.data.id
 
@@ -149,25 +181,30 @@ const Update = () => {
                     },
                 }
 
-                const icFrontFormData = new FormData()
-                icFrontFormData.append('file', icFront)
-                icFrontFormData.append('relation_id', id)
-                icFrontFormData.append('relation_type_id', 1)
-                icFrontFormData.append('file_category_id', 1)
+                    const icFrontFormData = new FormData()
+                    icFrontFormData.append('file', icFront)
+                    icFrontFormData.append('relation_id', id)
+                    icFrontFormData.append('relation_type_id', 1)
+                    icFrontFormData.append('file_category_id', 1)
+                
 
-                const icBackFormData = new FormData()
-                icBackFormData.append('file', icBack)
-                icBackFormData.append('relation_id', id)
-                icBackFormData.append('relation_type_id', 1)
-                icBackFormData.append('file_category_id', 1)
-
+               
+                    const icBackFormData = new FormData()
+                    icBackFormData.append('file', icBack)
+                    icBackFormData.append('relation_id', id)
+                    icBackFormData.append('relation_type_id', 1)
+                    icBackFormData.append('file_category_id', 1)
+                
                 try {
-                    const responseIcFront = await axios.post(
+                    if(icFront != ""  || icBack != "" )
+                    {
+                        console.log(icFront+"testing")
+                    const responseIcFront = await axios.patch(
                         '/api/files',
                         icFrontFormData,
                         headers,
                     )
-                    const responseIcBack = await axios.post(
+                    const responseIcBack = await axios.patch(
                         '/api/files',
                         icBackFormData,
                         headers,
@@ -176,12 +213,15 @@ const Update = () => {
                     console.log('upload ok')
                     console.log(responseIcFront)
                     console.log(responseIcBack)
-
+                    console.log("stdsadas")
+                    }
                     router.push(`/customers/${id}`)
+
                 } catch (e) {
                     console.error('Failed to upload!')
                     console.log(e)
                 }
+
             })
             .catch(error => {
                 console.log('error!')
@@ -261,11 +301,20 @@ const Update = () => {
                             className="mt-2"
                         />
                     </div>
-                  
+
                     <IcCheckingInputs
-                        onIcDetailsChange={onIcDetailsChangeHandler}
                         onCustomerChange={onExistingCustomerHandler}
-                        currentIcNumber={ custICNumber }
+                        icNumber={IcNumber}
+                        icTypeId={IcTypeId}
+                        icColorId={IcColorId}
+                        icExpiryDate={IcExpiryDate}
+
+                        setIcNumber={setIcNumber}
+                        setIcTypeId={setIcTypeId}
+                        setIcColorId={setIcColorId}
+                        setIcExpiryDate={setIcExpiryDate}
+                        updateMode={updateModeAct}
+
                     />
 
                     <div className="mt-4">
@@ -363,7 +412,6 @@ const Update = () => {
                             id="icFront"
                             type="file"
                             className="block mt-1 w-full"
-                            required
                             onChange={onIcFrontChangeHandler}
                         />
                     </div>
@@ -375,13 +423,21 @@ const Update = () => {
                             id="icBack"
                             type="file"
                             className="block mt-1 w-full"
-                            required
                             onChange={onIcBackChangeHandler}
                         />
                     </div>
+                    <div className="p-6 bg-white border-b border-gray-200">
+                        {icUrls.map(obj => (
+                            <img
+                                key={obj.id}
+                                src={obj.url}
+                                className="inline-block w-40 mr-4"
+                            />
+                        ))}
+                    </div>
 
                     <div className="flex items-center justify-end mt-4">
-                        <Button className="ml-4">Create</Button>
+                        <Button className="ml-4">Update</Button>
                     </div>
                 </form>
             </AuthCard>

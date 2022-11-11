@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 
 const IcCheckingInputs = ({
+    updateMode = false,
     icNumber,
     icTypeId,
     icColorId,
@@ -18,7 +19,8 @@ const IcCheckingInputs = ({
 }) => {
     
     const [customer, setCustomer] = useState(null)
-
+    if(updateMode){
+        
     useEffect(() => {
         const timer = setTimeout(() => {
             if (icNumber === '' || icTypeId === '') {
@@ -31,7 +33,7 @@ const IcCheckingInputs = ({
 
             queryString.set('ic_number', icNumber)
             queryString.set('ic_type_id', icTypeId)
-
+        
             axios
                 .get(`${endpoint}${queryString}`)
                 .then(res => {
@@ -49,10 +51,11 @@ const IcCheckingInputs = ({
                 })
                 .catch(e => console.error('IC number search failed', e))
         }, 500)
+        
 
         return () => clearTimeout(timer)
     }, [icNumber, icTypeId])
-
+    }
     useEffect(() => {
         onCustomerChange({ ...customer })
     }, [customer])
