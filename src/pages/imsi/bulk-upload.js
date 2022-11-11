@@ -1,13 +1,4 @@
-import ApplicationLogo from '@/components/ApplicationLogo'
-import AuthCard from '@/components/AuthCard'
-import Button from '@/components/Button'
-import GuestLayout from '@/components/Layouts/GuestLayout'
-import Input from '@/components/Input'
-import InputError from '@/components/InputError'
-import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import AppLayout from '@/components/Layouts/AppLayout'
@@ -46,7 +37,9 @@ const BulkUpload = () => {
                 </div>
                 <div className="flex flex-row">
                     <Link href="/templates/bulk-imsi-template.csv">
-                        <a className="flex-shrink-0 flex items-center border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300" id='file-template'>
+                        <a
+                            className="flex-shrink-0 flex items-center border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300"
+                            id="file-template">
                             File Template
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +57,7 @@ const BulkUpload = () => {
                         </a>
                     </Link>
                 </div>
-            </MainBody>
+            </MainBody>ß
         </AppLayout>
     )
 }
