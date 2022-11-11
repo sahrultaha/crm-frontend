@@ -13,6 +13,10 @@ import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 
+import AppLayout from '@/components/Layouts/AppLayout'
+import MainBody from '@/components/MainBody'
+import Head from 'next/head'
+
 const Update = () => {
     const router = useRouter()
     const [data, setData] = useState(null)
@@ -25,7 +29,7 @@ const Update = () => {
     const [IcTypeId, setIcTypeId] = useState('')
     const [IcColorId, setIcColorId] = useState('')
     const [IcExpiryDate, setIcExpiryDate] = useState('')
-    const [updateModeAct, setUpdateModeAct] = useState(false)
+    const [updateModeValue, setUpdateModeValue] = useState(true)
     const [IcNumberOrig, setIcNumberOrig] = useState('')
     const [IcTypeIdOrig, setIcTypeIdOrig] = useState('')
 
@@ -36,13 +40,31 @@ const Update = () => {
     const [birthDate, setBirthDate] = useState('')
     const [address, setAddress] = useState(null)
 
+    const [district, setDistrict] = useState('-----')
+    const [mukim, setMukim] = useState('-----')
+    const [village, setVillage] = useState('')
+    const [postalCode, setPostalCode] = useState('')
+    const [houseNumber, setHouseNumber] = useState('')
+    const [simpang, setSimpang] = useState('')
+    const [street, setStreet] = useState('')
+    const [buildingName, setBuildingName] = useState('')
+    const [block, setBlock] = useState('')
+    const [floor, setFloor] = useState('')
+    const [unit, setUnit] = useState('')
+
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
     const [icUrls, setIcUrls] = useState([])
 
     const onExistingCustomerHandler = val => {
+        console.log("chect",val)
+        console.log(IcNumber, IcNumberOrig)
+        console.log(IcTypeId, IcTypeIdOrig)
         setExistingCustomer(val)
+        
+        console.log("trigger changes")
+        
     }
 
     const onNameChangeHandler = event => setName(event.target.value)
@@ -137,7 +159,7 @@ const Update = () => {
         // }
 
         const data = {
-            id:CustomerId,
+            id: CustomerId,
             name: name,
             email: email === '' ? null : email,
             mobile_number: mobileNumber === '' ? null : mobileNumber,
@@ -149,24 +171,19 @@ const Update = () => {
             ic_type_id: IcTypeId ?? '',
             ic_color_id: IcColorId ?? '',
             ic_expiry_date: IcExpiryDate ?? '',
+            village: village ?? '',
+            district: district ?? '',
+            mukim: mukim ?? '',
+            postalcode: postalCode ?? '',
+            house_number: houseNumber ?? '',
+            simpang: simpang ?? '',
+            street: street ?? '',
+            building_name: buildingName ?? '',
+            block: block ?? '',
+            floor: floor ?? '',
+            unit: unit ?? '',
         }
 
-        if (address !== null) {
-            data = {
-                ...data,
-                village: address.village,
-                district: address.district,
-                mukim: address.mukim,
-                postalcode: address.postalCode,
-                house_number: address.houseNumber,
-                simpang: address.simpang,
-                street: address.street,
-                building_name: address.buildingName,
-                block: address.block,
-                floor: address.floor,
-                unit: address.unit,
-            }
-        }
 
         console.log(data)
         await axios
@@ -181,39 +198,38 @@ const Update = () => {
                     },
                 }
 
-                    const icFrontFormData = new FormData()
-                    icFrontFormData.append('file', icFront)
-                    icFrontFormData.append('relation_id', id)
-                    icFrontFormData.append('relation_type_id', 1)
-                    icFrontFormData.append('file_category_id', 1)
-                
+                const icFrontFormData = new FormData()
+                icFrontFormData.append('file', icFront)
+                icFrontFormData.append('relation_id', id)
+                icFrontFormData.append('relation_type_id', 1)
+                icFrontFormData.append('file_category_id', 1)
 
-               
-                    const icBackFormData = new FormData()
-                    icBackFormData.append('file', icBack)
-                    icBackFormData.append('relation_id', id)
-                    icBackFormData.append('relation_type_id', 1)
-                    icBackFormData.append('file_category_id', 1)
-                
+
+
+                const icBackFormData = new FormData()
+                icBackFormData.append('file', icBack)
+                icBackFormData.append('relation_id', id)
+                icBackFormData.append('relation_type_id', 1)
+                icBackFormData.append('file_category_id', 1)
+
                 try {
-                    if(icFront != ""  || icBack != "" )
-                    {
-                        console.log(icFront+"testing")
-                    const responseIcFront = await axios.patch(
-                        '/api/files',
-                        icFrontFormData,
-                        headers,
-                    )
-                    const responseIcBack = await axios.patch(
-                        '/api/files',
-                        icBackFormData,
-                        headers,
-                    )
+                    if (icFront != "" || icBack != "") {
+                        console.log(icFront + "testing")
+                        const responseIcFront = await axios.patch(
+                            '/api/files',
+                            icFrontFormData,
+                            headers,
+                        )
+                        const responseIcBack = await axios.patch(
+                            '/api/files',
+                            icBackFormData,
+                            headers,
+                        )
 
-                    console.log('upload ok')
-                    console.log(responseIcFront)
-                    console.log(responseIcBack)
-                    console.log("stdsadas")
+                        console.log('upload ok')
+                        console.log(responseIcFront)
+                        console.log(responseIcBack)
+                        console.log("stdsadas")
                     }
                     router.push(`/customers/${id}`)
 
@@ -240,15 +256,16 @@ const Update = () => {
     }
 
     return (
-        <GuestLayout>
-            <AuthCard
-                logo={
-                    <Link href="/">
-                        <a>
-                            <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
-                        </a>
-                    </Link>
-                }>
+        <AppLayout
+            header={
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                    Update Customer Details
+                </h2>
+            }>
+            <Head>
+                <title>Update Customer Details</title>
+            </Head>
+            <MainBody>
                 <form onSubmit={updateForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
@@ -309,11 +326,14 @@ const Update = () => {
                         icColorId={IcColorId}
                         icExpiryDate={IcExpiryDate}
 
+                        oriIcNumber={IcNumberOrig}
+                        oriIcTypeId={IcTypeIdOrig}
+
                         setIcNumber={setIcNumber}
                         setIcTypeId={setIcTypeId}
                         setIcColorId={setIcColorId}
                         setIcExpiryDate={setIcExpiryDate}
-                        updateMode={updateModeAct}
+                        updateMode={updateModeValue}
 
                     />
 
@@ -401,8 +421,28 @@ const Update = () => {
                     </div>
 
                     <AddressInputs
-                        onAddressChange={onAddressChangeHandler}
-                        errors={errors}
+                        district={district}
+                        mukim={mukim}
+                        village={village}
+                        postalCode={postalCode}
+                        houseNumber={houseNumber}
+                        simpang={simpang}
+                        street={street}
+                        buildingName={buildingName}
+                        block={block}
+                        floor={floor}
+                        unit={unit}
+                        setDistrict={setDistrict}
+                        setMukim={setMukim}
+                        setVillage={setVillage}
+                        setPostalCode={setPostalCode}
+                        setHouseNumber={setHouseNumber}
+                        setSimpang={setSimpang}
+                        setStreet={setStreet}
+                        setBuildingName={setBuildingName}
+                        setBlock={setBlock}
+                        setFloor={setFloor}
+                        setUnit={setUnit}
                     />
 
                     <div className="mt-4">
@@ -440,8 +480,8 @@ const Update = () => {
                         <Button className="ml-4">Update</Button>
                     </div>
                 </form>
-            </AuthCard>
-        </GuestLayout>
+            </MainBody>
+        </AppLayout>
     )
 }
 
