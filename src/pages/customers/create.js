@@ -6,10 +6,9 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
-import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
 import AppLayout from '@/components/Layouts/AppLayout'
@@ -30,7 +29,18 @@ const Create = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
-    const [address, setAddress] = useState(null)
+
+    const [district, setDistrict] = useState('-----')
+    const [mukim, setMukim] = useState('-----')
+    const [village, setVillage] = useState('')
+    const [postalCode, setPostalCode] = useState('')
+    const [houseNumber, setHouseNumber] = useState('')
+    const [simpang, setSimpang] = useState('')
+    const [street, setStreet] = useState('')
+    const [buildingName, setBuildingName] = useState('')
+    const [block, setBlock] = useState('')
+    const [floor, setFloor] = useState('')
+    const [unit, setUnit] = useState('')
 
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
@@ -48,17 +58,6 @@ const Create = () => {
         setAccountCategoryId(event.target.value)
     const onBirthDateChangeHandler = event =>
         setBirthDate(event.target.value.trim())
-    const onAddressChangeHandler = val => {
-        setAddress(val)
-    }
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIcNumber('00000009')
-            setIcTypeId('1')
-        }, 500)
-        return () => clearTimeout(timer)
-    }, [])
 
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
@@ -87,23 +86,17 @@ const Create = () => {
             ic_type_id: icTypeId ?? '',
             ic_color_id: icColorId ?? '',
             ic_expiry_date: icExpiryDate ?? '',
-        }
-
-        if (address !== null) {
-            data = {
-                ...data,
-                village: address.village,
-                district: address.district,
-                mukim: address.mukim,
-                postalcode: address.postalCode,
-                house_number: address.houseNumber,
-                simpang: address.simpang,
-                street: address.street,
-                building_name: address.buildingName,
-                block: address.block,
-                floor: address.floor,
-                unit: address.unit,
-            }
+            village: village ?? '',
+            district: district ?? '',
+            mukim: mukim ?? '',
+            postalcode: postalCode ?? '',
+            house_number: houseNumber ?? '',
+            simpang: simpang ?? '',
+            street: street ?? '',
+            building_name: buildingName ?? '',
+            block: block ?? '',
+            floor: floor ?? '',
+            unit: unit ?? '',
         }
 
         await axios
@@ -328,8 +321,28 @@ const Create = () => {
                     </div>
 
                     <AddressInputs
-                        onAddressChange={onAddressChangeHandler}
-                        errors={errors}
+                        district={district}
+                        mukim={mukim}
+                        village={village}
+                        postalCode={postalCode}
+                        houseNumber={houseNumber}
+                        simpang={simpang}
+                        street={street}
+                        buildingName={buildingName}
+                        block={block}
+                        floor={floor}
+                        unit={unit}
+                        setDistrict={setDistrict}
+                        setMukim={setMukim}
+                        setVillage={setVillage}
+                        setPostalCode={setPostalCode}
+                        setHouseNumber={setHouseNumber}
+                        setSimpang={setSimpang}
+                        setStreet={setStreet}
+                        setBuildingName={setBuildingName}
+                        setBlock={setBlock}
+                        setFloor={setFloor}
+                        setUnit={setUnit}
                     />
 
                     <div className="mt-4">
