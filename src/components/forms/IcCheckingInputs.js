@@ -5,11 +5,17 @@ import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 
 const IcCheckingInputs = ({
-    updateMode = false,
+    updateMode = true,
     icNumber,
     icTypeId,
     icColorId,
     icExpiryDate,
+    oriIcNumber,
+    oriIcTypeId,
+
+    setoriIcNumber,
+    setoriIcTypeId,
+
     setIcNumber,
     setIcTypeId,
     setIcColorId,
@@ -17,24 +23,30 @@ const IcCheckingInputs = ({
     onCustomerChange,
     ...props
 }) => {
-    
+
     const [customer, setCustomer] = useState(null)
-    if(updateMode){
-        
+
+    useEffect(()=>{
+        console.log(icExpiryDate)
+        console.log(oriIcNumber)
+    },[])
+
+
     useEffect(() => {
         const timer = setTimeout(() => {
             if (icNumber === '' || icTypeId === '') {
                 console.log('ic number or ic type id is empty...')
                 return
             }
-
+            console.log("orig",oriIcNumber)
+            if(updateMode) return
             const endpoint = '/api/customers/search?'
             const queryString = new URLSearchParams('ic_number&ic_type_id')
 
             queryString.set('ic_number', icNumber)
             queryString.set('ic_type_id', icTypeId)
-        
-            axios
+            
+                axios
                 .get(`${endpoint}${queryString}`)
                 .then(res => {
                     if (res.data.length > 0) {
@@ -50,12 +62,14 @@ const IcCheckingInputs = ({
                     setCustomer(null)
                 })
                 .catch(e => console.error('IC number search failed', e))
+           
         }, 500)
-        
+
 
         return () => clearTimeout(timer)
     }, [icNumber, icTypeId])
-    }
+
+
     useEffect(() => {
         onCustomerChange({ ...customer })
     }, [customer])
