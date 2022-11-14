@@ -36,6 +36,13 @@ const Index = () => {
                             IMSI
                         </NavLink>
                     </div>
+                    <div className="mr-4">
+                        <NavLink
+                            href="/imsi/create"
+                            active={router.pathname === '/imsi/create'}>
+                            Create New IMSI
+                        </NavLink>
+                    </div>
                     <div>
                         <NavLink
                             href="/imsi/bulk-upload"
