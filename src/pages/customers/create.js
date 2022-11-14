@@ -103,7 +103,7 @@ const Create = () => {
             floor: floor ?? '',
             unit: unit ?? '',
         }
-
+        console.log(data)
         await axios
             .post('/api/customers', data)
             .then(async res => {
@@ -144,7 +144,7 @@ const Create = () => {
                     console.log(responseIcFront)
                     console.log(responseIcBack)
 
-                    router.push(`/customers/${id}`)
+                    // router.push(`/customers/${id}`)
                 } catch (e) {
                     console.error('Failed to upload!')
                     console.log(e)

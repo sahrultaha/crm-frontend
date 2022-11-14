@@ -55,6 +55,10 @@ const Update = () => {
     const [block, setBlock] = useState('')
     const [floor, setFloor] = useState('')
     const [unit, setUnit] = useState('')
+    const [district_id, setDistrictId] = useState('')
+    const [mukim_id, setMukimId] = useState('')
+    const [village_id, setVillageId] = useState('')
+    const [postal_code_id, setPostalCodeId] = useState('')
 
     const [icFront, setIcFront] = useState('')
     const [icBack, setIcBack] = useState('')
@@ -97,7 +101,7 @@ const Update = () => {
 
         axios(`/api/customers/get?id=${CustomerId}`)
             .then(res => {
-                // console.log(res.data)
+                console.log(res.data)
                 setData(res.data)
                 setName(res.data['name'])
                 setEmail(res.data['email'] ?? "")
@@ -469,6 +473,10 @@ const Update = () => {
                         mukim={mukim}
                         village={village}
                         postalCode={postalCode}
+                        village_id={village_id}
+                        district_id={district_id}
+                        mukim_id={mukim_id}
+                        postal_code_id={postal_code_id}
                         houseNumber={houseNumber}
                         simpang={simpang}
                         street={street}
@@ -480,6 +488,10 @@ const Update = () => {
                         setMukim={setMukim}
                         setVillage={setVillage}
                         setPostalCode={setPostalCode}
+                        setVillageId={setVillageId}
+                        setDistrictId={setDistrictId}
+                        setMukimId={setMukimId}
+                        setPostalCodeId={setPostalCodeId}
                         setHouseNumber={setHouseNumber}
                         setSimpang={setSimpang}
                         setStreet={setStreet}
