@@ -59,7 +59,9 @@ const ImsiBulkUpload = () => {
                 <form className="" onSubmit={submitForm}>
                     <InputFile
                         setFileHandler={setFile}
-                        required="required"></InputFile>
+                        className=""
+                        required="required"
+                        id="bulkUploadImsiFile"></InputFile>
                     <Button>Submit</Button>
                 </form>
             </div>
