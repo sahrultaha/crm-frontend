@@ -61,14 +61,14 @@ const Update = () => {
     const [errors, setErrors] = useState([])
     const [icUrls, setIcUrls] = useState([])
 
+    const [icFrontID, seticFrontID] = useState('')
+    const [icBackID, seticBackID] = useState('')
+
     const onExistingCustomerHandler = val => {
         console.log(IcNumber, IcNumberOrig)
         console.log(IcTypeId, IcTypeIdOrig)
         setUpdateModeValue(true)
         setExistingCustomer(val)
-        
-        console.log("trigger changes")
-        
     }
 
     const onNameChangeHandler = event => setName(event.target.value)
@@ -130,6 +130,7 @@ const Update = () => {
 
             })
     }, [router.isReady])
+
     useEffect(async () => {
         if (!data) {
             console.log('no data, abort fetching images...')
@@ -137,7 +138,9 @@ const Update = () => {
         }
 
         try {
-            // console.log(data)
+            seticFrontID(data.file_ids[0])
+            seticBackID(data.file_ids[1])
+
             for (const fileId of data.file_ids) {
                 const resp = await axios.get(`/api/files/${fileId}`)
                 setIcUrls(prevState => [
@@ -153,10 +156,10 @@ const Update = () => {
         }
     }, [data])
 
+
     const updateForm = async event => {
         event.preventDefault()
         const { id: CustomerId } = router.query
-        console.log("clicked")
 
         // TODO: validation
         // if (icFront === '' || icFront === null) {
@@ -204,42 +207,48 @@ const Update = () => {
                         'Content-Type': 'multipart/form-data',
                     },
                 }
-
+                // console.log("ic front id", icFrontID, " back:", icBackID)
                 const icFrontFormData = new FormData()
                 icFrontFormData.append('file', icFront)
                 icFrontFormData.append('relation_id', id)
                 icFrontFormData.append('relation_type_id', 1)
                 icFrontFormData.append('file_category_id', 1)
+                icFrontFormData.append('file_id', icFrontID)
+
+                icFrontFormData.append('_method', 'PATCH')
 
                 const icBackFormData = new FormData()
                 icBackFormData.append('file', icBack)
                 icBackFormData.append('relation_id', id)
                 icBackFormData.append('relation_type_id', 1)
                 icBackFormData.append('file_category_id', 1)
-           
+                icBackFormData.append('file_id', icBackID)
+                icBackFormData.append('_method', 'PATCH')
                 try {
-                    if (icFront != "" || icBack != "") {
-                        console.log(icFrontFormData,"form data front")
-                        const responseIcFront = await axios.put(
+
+                    if (icFront != "") {
+                        // console.log(icFrontFormData, "form data front")
+                        const responseIcFront = await axios.post(
                             '/api/files',
                             icFrontFormData,
                             headers,
-                            console.log(icFrontFormData + "testing front")
+                            // console.log(icFrontFormData + "testing front")
                         )
-                        console.log(icBackFormData + "form data back")
-                        const responseIcBack = await axios.put(
+                        console.log('upload ok')
+                        console.log("Front", responseIcFront)
+                    }
+                    if (icBack != "") {
+
+                        const responseIcBack = await axios.post(
                             '/api/files',
                             icBackFormData,
                             headers,
-                            console.log(icBackFormData + "testing back")
+                            // console.log(icBackFormData + "testing back")
                         )
-
                         console.log('upload ok')
-                        console.log("Front",responseIcFront)
-                        console.log("Back",responseIcBack)
-                        console.log("stdsadas")
+                        console.log("Back", responseIcBack)
                     }
-                    // router.push(`/customers/${id}`)
+                    router.push(`/customers/${id}`)
 
                 } catch (e) {
                     console.error('Failed to upload!')
@@ -263,19 +272,19 @@ const Update = () => {
             })
     }
 
-    if (data == null || data == ""){
-        return(
+    if (data == null || data == "") {
+        return (
 
             <AppLayout
-            header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Update Customer Details
-                </h2>
-            }>
-            <Head>
-                <title>Update Customer Details</title>
-            </Head>
-            <div className="py-12">
+                header={
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Update Customer Details
+                    </h2>
+                }>
+                <Head>
+                    <title>Update Customer Details</title>
+                </Head>
+                <div className="py-12">
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <div className="p-6 bg-white border-b border-gray-200">
