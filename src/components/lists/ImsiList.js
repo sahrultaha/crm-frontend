@@ -1,7 +1,7 @@
-import { useIndex } from '@/hooks'
+import { useGetData } from '@/hooks/getData'
 
 const ImsiList = () => {
-    const { data, loading, currentLastPage, setCurrentPage } = useIndex('/api/imsi')
+    const { data, loading, currentLastPage, setCurrentPage } = useGetData('/api/imsi')
 
     let listItems = []
     if (!loading && data.length > 0) {

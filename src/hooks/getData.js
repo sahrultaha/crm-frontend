@@ -1,7 +1,7 @@
 import axios from '@/lib/axios'
 import { useState, useEffect, useCallback } from 'react'
 
-export const useIndex = (url, defaultLimit = 10, defaultSort = 'desc') => {
+export const useGetData = (url, defaultLimit = 10, defaultSort = 'desc') => {
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
