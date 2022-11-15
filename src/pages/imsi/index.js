@@ -1,22 +1,13 @@
-import ApplicationLogo from '@/components/ApplicationLogo'
-import AuthCard from '@/components/AuthCard'
-import Button from '@/components/Button'
-import GuestLayout from '@/components/Layouts/GuestLayout'
-import Input from '@/components/Input'
-import InputError from '@/components/InputError'
-import Label from '@/components/Label'
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
-import * as React from 'react'
 import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
 import NavLink from '@/components/NavLink'
 import Head from 'next/head'
+import ImsiList from '@/components/lists/ImsiList'
 
 const Index = () => {
     const router = useRouter()
+
     return (
         <AppLayout
             header={
@@ -51,6 +42,8 @@ const Index = () => {
                         </NavLink>
                     </div>
                 </div>
+
+                <ImsiList/>
             </MainBody>
         </AppLayout>
     )
