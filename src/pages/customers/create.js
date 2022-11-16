@@ -50,6 +50,7 @@ const Create = () => {
     const [mukim_id, setMukimId] = useState('')
     const [village_id, setVillageId] = useState('')
     const [postal_code_id, setPostalCodeId] = useState('')
+    const [address_type_id, setAddressTypeId] = useState('')
 
     const onExistingCustomerHandler = val => setExistingCustomer(val)
     const onNameChangeHandler = event => setName(event.target.value)
@@ -79,6 +80,8 @@ const Create = () => {
             alert('No ic back provided')
         }
 
+        setAddressTypeId(1)
+
         const data = {
             name: name,
             email: email === '' ? null : email,
@@ -102,6 +105,7 @@ const Create = () => {
             block: block ?? '',
             floor: floor ?? '',
             unit: unit ?? '',
+            address_type_id: address_type_id ?? '',
         }
 
         await axios
