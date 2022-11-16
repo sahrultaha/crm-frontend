@@ -1,19 +1,40 @@
 import { useGetData } from '@/hooks/getData'
+import Button from '@/components/Button'
 
 const ImsiList = () => {
-    const { data, loading, currentLastPage, setCurrentPage } = useGetData('/api/imsi')
+    const {
+        data,
+        loading,
+        currentLastPage,
+        setCurrentPage,
+        deleteItemFromList,
+    } = useGetData('/api/imsi')
+
+    const deleteHandler = id => {
+        let confirmDelete = confirm(
+            `Do you want to delete the entry with id ${id}?`,
+        )
+        if (confirmDelete) {
+            deleteItemFromList(id)
+        }
+    }
 
     let listItems = []
     if (!loading && data.length > 0) {
         listItems = data.map(d => {
             return (
-                <li key={d.id} className='grid grid-cols-5 gap-4'>
-                    <p>{d.id}</p>
-                    <p>{d.imsi}</p>
-                    <p>{d.pin}</p>
-                    <p>{d.puk_1}</p>
-                    <p>{d.puk_2}</p>
-                </li>
+                <tr key={d.id}>
+                    <td>{d.id}</td>
+                    <td>{d.imsi}</td>
+                    <td>{d.pin}</td>
+                    <td>{d.puk_1}</td>
+                    <td>{d.puk_2}</td>
+                    <td>
+                        <Button onClick={() => deleteHandler(d.id)}>
+                            Delete
+                        </Button>
+                    </td>
+                </tr>
             )
         })
     }
@@ -37,17 +58,19 @@ const ImsiList = () => {
 
     return (
         <div>
-            <div>
-                <ul className='grid grid-cols-5 gap-4'>
-                    <li>ID</li>
-                    <li>Imsi</li>
-                    <li>Pin</li>
-                    <li>PUK1</li>
-                    <li>PUK2</li>
-                </ul>
-                <ul className="mb-4">{listItems}</ul>
-            </div>
-            
+            <table className="w-full table-fixed">
+                <thead>
+                    <tr className="text-left">
+                        <th>ID</th>
+                        <th>Imsi</th>
+                        <th>Pin</th>
+                        <th>PUK1</th>
+                        <th>PUK2</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>{listItems}</tbody>
+            </table>
 
             <div>
                 <h2>Pages</h2>
