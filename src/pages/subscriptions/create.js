@@ -1,10 +1,16 @@
 import AppLayout from '@/components/Layouts/AppLayout'
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
-import Label from '@/components/Label'
-import axios from '@/lib/axios'
+import { useState } from 'react'
+import MainBody from '@/components/MainBody'
+import IcCheckingInputsLite from '@/components/forms/subscriptions/IcCheckingInputsLite'
+import SearchPackByNumber from '@/components/forms/subscriptions/SearchPackByNumber'
 
 const Create = () => {
+    const [customer, setCustomer] = useState({})
+    const [pack, setPack] = useState({})
+
+    const isEmptyObject = c => Object.keys(c).length === 0
+
     return (
         <AppLayout
             header={
@@ -16,13 +22,35 @@ const Create = () => {
                 <title>New Subscription</title>
             </Head>
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-12 bg-white border-b border-gray-200"></div>
+            <MainBody>
+                {isEmptyObject(customer) ? (
+                    <IcCheckingInputsLite onCustomerChange={setCustomer} />
+                ) : (
+                    ''
+                )}
+
+                {!isEmptyObject(customer) ? (
+                    <p>Customer id is {customer.id}</p>
+                ) : (
+                    ''
+                )}
+
+                {!isEmptyObject(customer) ? (
+                    <SearchPackByNumber onPackChange={setPack} />
+                ) : (
+                    ''
+                )}
+
+                {!isEmptyObject(pack) ? (
+                    <div>
+                        <p>Pack id is {pack.id}</p>
+                        <p>Product id is {pack.product_id}</p>
+                        <p>Imsi id is {pack.imsi_id}</p>
                     </div>
-                </div>
-            </div>
+                ) : (
+                    ''
+                )}
+            </MainBody>
         </AppLayout>
     )
 }
