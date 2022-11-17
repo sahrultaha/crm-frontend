@@ -36,18 +36,20 @@ const AddressInputs = ({
     setUnit,
     ...props
 }) => {
-    
-    const onHouseNumberChangeHandler = event => setHouseNumber(event.target.value)
+    const onHouseNumberChangeHandler = event =>
+        setHouseNumber(event.target.value)
     const onSimpangChangeHandler = event => setSimpang(event.target.value)
     const onStreetChangeHandler = event => setStreet(event.target.value)
-    const onBuildingNameChangeHandler = event => setBuildingName(event.target.value)
+    const onBuildingNameChangeHandler = event =>
+        setBuildingName(event.target.value)
     const onBlockChangeHandler = event => setBlock(event.target.value)
     const onFloorChangeHandler = event => setFloor(event.target.value)
     const onUnitChangeHandler = event => setUnit(event.target.value)
-    const onPostalCodeChangeHandler = event => setPostalCode(event.target.value.trim())
+    const onPostalCodeChangeHandler = event =>
+        setPostalCode(event.target.value.trim())
 
     const onVillageChange = value => {
-        setVillage(value.name)
+        setVillage(value)
         setVillageId(value.id)
         setMukim(value.mukim.name)
         setMukimId(value.mukim.id)
@@ -74,19 +76,25 @@ const AddressInputs = ({
                 <Label htmlFor="addressLabel">Kampung</Label>
 
                 <div id="addressLabel">
-                    <VillageComboBox 
-                        village={village} onVillageChange={onVillageChange} />
+                    <VillageComboBox
+                        selectedVillage={village}
+                        onVillageChange={onVillageChange}
+                    />
                 </div>
             </div>
 
             <div className="mt-2 grid grid-cols-2 gap-2">
                 <div>
                     <Label htmlFor="districtId">District</Label>
-                    <p id="districtId" className="text-sm">{district}</p>
+                    <p id="districtId" className="text-sm">
+                        {district}
+                    </p>
                 </div>
                 <div>
                     <Label htmlFor="mukimId">Mukim</Label>
-                    <p id="mukimId" className="text-sm">{mukim}</p>
+                    <p id="mukimId" className="text-sm">
+                        {mukim}
+                    </p>
                 </div>
             </div>
 
@@ -193,7 +201,7 @@ const AddressInputs = ({
                         className="block mt-1 w-full"
                         placeholder="e.g. Unit 2A"
                         onChange={onUnitChangeHandler}
-                    />                    
+                    />
                 </div>
             </div>
         </div>
