@@ -6,33 +6,47 @@ import Input from '@/components/Input'
 import InputError from '@/components/InputError'
 import Label from '@/components/Label'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 import { useRouter } from 'next/router'
+import * as React from 'react'
 import AddressInputs from '@/components/forms/AddressInputs'
 import IcCheckingInputs from '@/components/forms/IcCheckingInputs'
+
 import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
 import Head from 'next/head'
 
-const Create = () => {
+const Update = () => {
     const router = useRouter()
+    const [data, setData] = useState(null)
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [mobileNumber, setMobileNumber] = useState('')
     const [existingCustomer, setExistingCustomer] = useState(null)
-    const [icNumber, setIcNumber] = useState('')
-    const [icTypeId, setIcTypeId] = useState('')
-    const [icColorId, setIcColorId] = useState('')
-    const [icExpiryDate, setIcExpiryDate] = useState('')
+
+    const [IcNumber, setIcNumber] = useState('')
+    const [IcTypeId, setIcTypeId] = useState('')
+    const [IcColorId, setIcColorId] = useState('')
+    const [IcExpiryDate, setIcExpiryDate] = useState('')
+    const [updateModeValue, setUpdateModeValue] = useState(false)
+
+
+    const [OriIcColorId, setOriIcColorId] = useState('')
+    const [OriIcExpiryDate, setOriIcExpiryDate] = useState('')
+    const [IcNumberOrig, setIcNumberOrig] = useState('')
+    const [IcTypeIdOrig, setIcTypeIdOrig] = useState('')
+
+
     const [countryId, setCountryId] = useState(1)
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
+    const [address, setAddress] = useState(null)
 
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
-    const [village, setVillage] = useState('')
+    const [village, setVillage] = useState({id : '', 'name' : ''})
     const [postalCode, setPostalCode] = useState('')
     const [houseNumber, setHouseNumber] = useState('')
     const [simpang, setSimpang] = useState('')
@@ -41,18 +55,27 @@ const Create = () => {
     const [block, setBlock] = useState('')
     const [floor, setFloor] = useState('')
     const [unit, setUnit] = useState('')
-
-    const [icFront, setIcFront] = useState('')
-    const [icBack, setIcBack] = useState('')
-    const [errors, setErrors] = useState([])
-    const [checkIcExist, setIcCheckExist] = useState(null)
     const [district_id, setDistrictId] = useState('')
     const [mukim_id, setMukimId] = useState('')
     const [village_id, setVillageId] = useState('')
     const [postal_code_id, setPostalCodeId] = useState('')
-    const [address_type_id, setAddressTypeId] = useState('')
+    const [address_id, setAddressID] = useState('')
 
-    const onExistingCustomerHandler = val => setExistingCustomer(val)
+    const [icFront, setIcFront] = useState('')
+    const [icBack, setIcBack] = useState('')
+    const [errors, setErrors] = useState([])
+    const [icUrls, setIcUrls] = useState([])
+
+    const [icFrontID, seticFrontID] = useState('')
+    const [icBackID, seticBackID] = useState('')
+
+    const onExistingCustomerHandler = val => {
+        console.log(IcNumber, IcNumberOrig)
+        console.log(IcTypeId, IcTypeIdOrig)
+        setUpdateModeValue(true)
+        setExistingCustomer(val)
+    }
+
     const onNameChangeHandler = event => setName(event.target.value)
     const onEmailChangeHandler = event => setEmail(event.target.value.trim())
     const onMobileNumberChangeHandler = event =>
@@ -64,23 +87,124 @@ const Create = () => {
         setAccountCategoryId(event.target.value)
     const onBirthDateChangeHandler = event =>
         setBirthDate(event.target.value.trim())
+    const onAddressChangeHandler = val => {
+        setAddress(val)
+    }
 
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
 
-    const submitForm = async event => {
+
+    useEffect(() => {
+        if (!router.isReady) return
+        const { id: CustomerId } = router.query
+        // console.log("customer id : " + CustomerId)
+
+        axios(`/api/customers/get?id=${CustomerId}`)
+            .then(res => {
+                console.log("test",res.data)
+
+                setData(res.data)
+
+                setName(res.data['name'])
+                setEmail(res.data['email'] ?? "")
+                setMobileNumber(res.data['mobile_number'] ?? "")
+
+                setIcNumber(res.data['ic_number'])
+                setIcTypeId(res.data['ic_type_id'])
+                setIcColorId(res.data['ic_color_id'] ?? "")
+                setIcExpiryDate(res.data['ic_expiry_date'])
+
+
+                setOriIcColorId(res.data['ic_color_id'] ?? "")
+                setOriIcExpiryDate(res.data['ic_expiry_date'])
+
+                setIcNumberOrig(res.data['ic_number'])
+                setIcTypeIdOrig(res.data['ic_type_id'])
+
+
+
+                setCountryId(res.data['country_id'])
+                setCustomerTitleId(res.data['customer_title_id'] ?? "")
+                setAccountCategoryId(res.data['account_category_id'])
+                setBirthDate(res.data['birth_date'])
+                setAddressID(res.data['address'][0]['address_id'] ?? '')
+                setHouseNumber(res.data['address'][0]['address']['house_number'] ?? '')
+                setSimpang(res.data['address'][0]['address']['simpang'] ?? '')
+                setStreet(res.data['address'][0]['address']['street'] ?? '')
+                setBuildingName(res.data['address'][0]['address']['building_name'] ?? '')
+                setBlock(res.data['address'][0]['address']['block'] ?? '')
+                setFloor(res.data['address'][0]['address']['floor'] ?? '')
+                setUnit(res.data['address'][0]['address']['unit'] ?? '')
+                
+                setMukim(res.data['address'][0]['address']['mukim']['name'] ?? '')
+                setDistrict(res.data['address'][0]['address']['district']['name'] ?? '')
+                setPostalCode(res.data['address'][0]['address']['postalcode']['name'] ?? '')
+                
+                
+                setMukimId(res.data['address'][0]['address']['mukim']['id'] ?? '');
+                setDistrictId(res.data['address'][0]['address']['district']['id'] ?? '');
+                setPostalCodeId(res.data['address'][0]['address']['postalcode']['id'] ?? '');
+                
+                setVillageId(res.data['address'][0]['address']['village']['id'] ?? '');
+                setVillage({
+                    'id' : res.data['address'][0]['address']['village']['id'] ?? '',
+                    'name' : res.data['address'][0]['address']['village']['name'] ?? ''
+                })
+
+            })
+            .catch(error => {
+                // setData(null)
+            })
+            .finally(() => {
+
+            })
+    }, [router.isReady])
+
+    useEffect(async () => {
+        if (!data) {
+            console.log('no data, abort fetching images...')
+            return
+        }
+
+        try {
+            seticFrontID(data.file_ids[0])
+            seticBackID(data.file_ids[1])
+
+            for (const fileId of data.file_ids) {
+                const resp = await axios.get(`/api/files/${fileId}`)
+                setIcUrls(prevState => [
+                    ...prevState,
+                    {
+                        id: fileId,
+                        url: resp.data.url,
+                    },
+                ])
+            }
+        } catch (e) {
+            console.log('Error getting file urls...', e)
+        }
+    }, [data])
+    
+    const updateForm = async event => {
+        var confirmBox = confirm('Are you sure to update customer?');
+        if(confirmBox){
+          
         event.preventDefault()
+        const { id: CustomerId } = router.query
 
         // TODO: validation
-        if (icFront === '' || icFront === null) {
-            alert('No ic front provided')
-        }
+        // if (icFront === '' || icFront === null) {
+        //     alert('No ic front provided')
+        // }
 
-        if (icBack === '' || icBack === null) {
-            alert('No ic back provided')
-        }
+        // if (icBack === '' || icBack === null) {
+        //     alert('No ic back provided')
+        // }
 
         const data = {
+          
+            id: CustomerId,
             name: name,
             email: email === '' ? null : email,
             mobile_number: mobileNumber === '' ? null : mobileNumber,
@@ -88,10 +212,10 @@ const Create = () => {
             customer_title_id: customerTitleId === '' ? null : customerTitleId,
             account_category_id: accountCategoryId,
             birth_date: birthDate,
-            ic_number: icNumber ?? '',
-            ic_type_id: icTypeId ?? '',
-            ic_color_id: icColorId ?? '',
-            ic_expiry_date: icExpiryDate ?? '',
+            ic_number: IcNumber ?? '',
+            ic_type_id: IcTypeId ?? '',
+            ic_color_id: IcColorId ?? '',
+            ic_expiry_date: IcExpiryDate ?? '',
             village_id: village_id ?? '',
             district_id: district_id ?? '',
             mukim_id: mukim_id ?? '',
@@ -103,11 +227,11 @@ const Create = () => {
             block: block ?? '',
             floor: floor ?? '',
             unit: unit ?? '',
-            address_type_id: 1,
+            address_id: address_id,
         }
-
+        console.log(data)
         await axios
-            .post('/api/customers', data)
+            .put('/api/customers/update', data)
             .then(async res => {
                 const id = res.data.id
 
@@ -117,40 +241,55 @@ const Create = () => {
                         'Content-Type': 'multipart/form-data',
                     },
                 }
-
+                // console.log("ic front id", icFrontID, " back:", icBackID)
                 const icFrontFormData = new FormData()
                 icFrontFormData.append('file', icFront)
                 icFrontFormData.append('relation_id', id)
                 icFrontFormData.append('relation_type_id', 1)
                 icFrontFormData.append('file_category_id', 1)
+                icFrontFormData.append('file_id', icFrontID)
+                // patch file using post method
+                icFrontFormData.append('_method', 'PATCH')
 
                 const icBackFormData = new FormData()
                 icBackFormData.append('file', icBack)
                 icBackFormData.append('relation_id', id)
                 icBackFormData.append('relation_type_id', 1)
                 icBackFormData.append('file_category_id', 1)
-
+                icBackFormData.append('file_id', icBackID)
+                // patch file using post method
+                icBackFormData.append('_method', 'PATCH')
                 try {
-                    const responseIcFront = await axios.post(
-                        '/api/files',
-                        icFrontFormData,
-                        headers,
-                    )
-                    const responseIcBack = await axios.post(
-                        '/api/files',
-                        icBackFormData,
-                        headers,
-                    )
 
-                    console.log('upload ok')
-                    console.log(responseIcFront)
-                    console.log(responseIcBack)
-                    console.log(data)
+                    if (icFront != "") {
+                        // console.log(icFrontFormData, "form data front")
+                        const responseIcFront = await axios.post(
+                            '/api/files',
+                            icFrontFormData,
+                            headers,
+                            // console.log(icFrontFormData + "testing front")
+                        )
+                        console.log('upload ok')
+                        console.log("Front", responseIcFront)
+                    }
+                    if (icBack != "") {
+
+                        const responseIcBack = await axios.post(
+                            '/api/files',
+                            icBackFormData,
+                            headers,
+                            // console.log(icBackFormData + "testing back")
+                        )
+                        console.log('upload ok')
+                        console.log("Back", responseIcBack)
+                    }
                     router.push(`/customers/${id}`)
+
                 } catch (e) {
                     console.error('Failed to upload!')
                     console.log(e)
                 }
+
             })
             .catch(error => {
                 console.log('error!')
@@ -166,20 +305,51 @@ const Create = () => {
                 }
                 console.log(error.config)
             })
+        }
+        else{
+            event.preventDefault();
+            return false;
+        }
+    }
+   
+
+    if (data == null || data == "") {
+        return (
+
+            <AppLayout
+                header={
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                        Update Customer Details
+                    </h2>
+                }>
+                <Head>
+                    <title>Update Customer Details</title>
+                </Head>
+                <div className="py-12">
+                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <div className="p-6 bg-white border-b border-gray-200">
+                                Invalid Customer ID
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </AppLayout>
+        )
     }
 
     return (
         <AppLayout
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Create Customer
+                    Update Customer Details
                 </h2>
             }>
             <Head>
-                <title>Create Customer</title>
+                <title>Update Customer Details</title>
             </Head>
             <MainBody>
-                <form className='mx-auto max-w-screen-sm' onSubmit={submitForm}>
+                <form onSubmit={updateForm}>
                     <div>
                         <Label htmlFor="name">Name</Label>
 
@@ -234,14 +404,22 @@ const Create = () => {
 
                     <IcCheckingInputs
                         onCustomerChange={onExistingCustomerHandler}
-                        icNumber={icNumber}
-                        icTypeId={icTypeId}
-                        icColorId={icColorId}
-                        icExpiryDate={icExpiryDate}
+                        icNumber={IcNumber}
+                        icTypeId={IcTypeId}
+                        icColorId={IcColorId}
+                        icExpiryDate={IcExpiryDate}
+
+                        oriIcNumber={IcNumberOrig}
+                        oriIcTypeId={IcTypeIdOrig}
+                        oriExpiryDate={OriIcExpiryDate}
+                        oriIcColorId={OriIcColorId}
+
                         setIcNumber={setIcNumber}
                         setIcTypeId={setIcTypeId}
                         setIcColorId={setIcColorId}
                         setIcExpiryDate={setIcExpiryDate}
+                        updateMode={updateModeValue}
+
                     />
 
                     <div className="mt-4">
@@ -367,7 +545,6 @@ const Create = () => {
                             id="icFront"
                             type="file"
                             className="block mt-1 w-full"
-                            required
                             onChange={onIcFrontChangeHandler}
                         />
                     </div>
@@ -379,13 +556,21 @@ const Create = () => {
                             id="icBack"
                             type="file"
                             className="block mt-1 w-full"
-                            required
                             onChange={onIcBackChangeHandler}
                         />
                     </div>
+                    <div className="p-6 bg-white border-b border-gray-200">
+                        {icUrls.map(obj => (
+                            <img
+                                key={obj.id}
+                                src={obj.url}
+                                className="inline-block w-40 mr-4"
+                            />
+                        ))}
+                    </div>
 
                     <div className="flex items-center justify-end mt-4">
-                        <Button className="ml-4">Create</Button>
+                        <Button className="ml-4 bg-gray-100">Save changes</Button>
                     </div>
                 </form>
             </MainBody>
@@ -393,4 +578,4 @@ const Create = () => {
     )
 }
 
-export default Create
+export default Update

@@ -5,10 +5,16 @@ import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 
 const IcCheckingInputs = ({
+    updateMode,
     icNumber,
     icTypeId,
     icColorId,
     icExpiryDate,
+    oriIcNumber,
+    oriIcTypeId,
+    oriExpiryDate,
+    oriIcColorId,
+
     setIcNumber,
     setIcTypeId,
     setIcColorId,
@@ -16,8 +22,16 @@ const IcCheckingInputs = ({
     onCustomerChange,
     ...props
 }) => {
-    
+
     const [customer, setCustomer] = useState(null)
+    useEffect(() =>{
+        if(oriIcNumber !== icNumber){
+            updateMode=true
+            console.log(updateMode)
+            console.log(oriIcNumber,icNumber,"ello")
+        } 
+        // console.log(icNumber,"changed")
+    },[icNumber,icTypeId])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -25,14 +39,23 @@ const IcCheckingInputs = ({
                 console.log('ic number or ic type id is empty...')
                 return
             }
-
+            if(updateMode == false) return
+            
+            if(oriIcNumber == icNumber && oriIcTypeId == icTypeId){
+                setIcNumber(oriIcNumber)
+                setIcTypeId(oriIcTypeId)
+                setIcColorId(oriIcColorId)
+                setIcExpiryDate(oriExpiryDate)
+                return
+            } 
+            
             const endpoint = '/api/customers/search?'
             const queryString = new URLSearchParams('ic_number&ic_type_id')
 
             queryString.set('ic_number', icNumber)
             queryString.set('ic_type_id', icTypeId)
-
-            axios
+           
+                axios
                 .get(`${endpoint}${queryString}`)
                 .then(res => {
                     if (res.data.length > 0) {
@@ -48,10 +71,13 @@ const IcCheckingInputs = ({
                     setCustomer(null)
                 })
                 .catch(e => console.error('IC number search failed', e))
+           
         }, 500)
 
+
         return () => clearTimeout(timer)
-    }, [icNumber, icTypeId])
+    }, [icNumber, icTypeId,updateMode,oriIcNumber,oriIcTypeId,icExpiryDate,icColorId])
+
 
     useEffect(() => {
         onCustomerChange({ ...customer })
