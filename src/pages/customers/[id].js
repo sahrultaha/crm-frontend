@@ -12,6 +12,9 @@ const Show = () => {
     const [data, setData] = useState(null)
     const [icUrls, setIcUrls] = useState([])
     const [showModal, setShowModal] = useState(false);
+    const [icColor, setIcColor] = useState('')
+    const [icType, setIcType] = useState('')
+
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
     const [village, setVillage] = useState({id : '', 'name' : ''})
@@ -63,6 +66,7 @@ const Show = () => {
         const { id: CustomerId } = router.query
         axios (`/api/customers/${CustomerId}`)
             .then(res => {
+                console.log(res.data)
                 setData(res.data)
                 setHouseNumber(res.data['address'][0]['address']['house_number'])
                 setSimpang(res.data['address'][0]['address']['simpang'])
@@ -74,6 +78,8 @@ const Show = () => {
                 setMukim(res.data['address'][0]['address']['mukim']['name'])
                 setDistrict(res.data['address'][0]['address']['district']['name'])
                 setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
+                setIcColor(res.data['ic_color']['name'])
+                setIcType(res.data['ic_type']['name'])
                 setVillage({
                     'id' : res.data['address'][0]['address']['village']['id'],
                     'name' : res.data['address'][0]['address']['village']['name']
@@ -166,30 +172,30 @@ const Show = () => {
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             IC Number : {data.ic_number} <br />
-                            IC Type ID : {data.ic_type_id}
+                            IC Type : {icType} 
                             <br />
-                            IC Color ID : {data.ic_color_id}
+                            IC Color : {icColor}
                             <br />
-                            Expired : {data.ic_expiry_date} <br />
+                            Expired : {data.ic_expiry_date ?? ''} <br />
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Phone Number : {data.mobile_number}
+                            Phone Number :+{data.country_code} {data.mobile_number}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             Email : {data.email}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Country ID : {data.country_id}
+                            {/* Country : {data.country.name ?? ''} */}
                         </div>
                         
                         <div className="p-6 bg-white border-b border-gray-200">
                             Address <br/>
-                            {houseNumber} {unit} {floor} {block} {buildingName} {simpang} {street} <br/>
+                            {`${houseNumber},`} {`${floor},` ?? ''} {`${block},` ?? ''} <br/>
+                            {`${buildingName},`} {`${simpang},`} {`${street},`} <br/>
                             {village.name}<br/>
                              {postalCode}<br/>
                             {district} <br/>
-                            {data.country_id}
                             
 
                         </div>

@@ -27,8 +27,6 @@ const IcCheckingInputs = ({
     useEffect(() =>{
         if(oriIcNumber !== icNumber){
             updateMode=true
-            console.log(updateMode)
-            console.log(oriIcNumber,icNumber,"ello")
         } 
         // console.log(icNumber,"changed")
     },[icNumber,icTypeId])
