@@ -7,20 +7,38 @@ import axios from '@/lib/axios'
 import MainBody from '@/components/MainBody'
 import NavLink from '@/components/NavLink'
 import IcCheckingInputsLite from '@/components/forms/subscriptions/IcCheckingInputsLite'
+import CreateCustomerForm from '@/components/forms/customer/CreateCustomerForm'
 import SearchPackByNumber from '@/components/forms/subscriptions/SearchPackByNumber'
 
 const Create = () => {
-    const [customer, setCustomer] = useState({})
-    const [pack, setPack] = useState({})
+    const [customer, setCustomer] = useState(null)
+    const [pack, setPack] = useState(null)
+    const [icDetails, setIcDetails] = useState(null)
     const [loading, setLoading] = useState(false)
     const [subCreated, setSubCreated] = useState(false)
     const router = useRouter()
 
-    const isEmptyObject = c => Object.keys(c).length === 0
+    const onCustomerCreated = id => {
+        if (loading) return
+        console.log('on customer created id', id)
+        setLoading(true)
+        axios
+            .get(`/api/customers/${id}`)
+            .then(resp => {
+                console.log('Customer created...', resp)
+                setCustomer({ ...resp.data })
+            })
+            .catch(e => {
+                console.error('Something went wrong...', e)
+            })
+            .finally(_ => {
+                setLoading(false)
+            })
+    }
 
     const createSubscription = _ => {
         if (loading) return
-        if (isEmptyObject(pack)) return
+        if (pack === null) return
 
         setLoading(true)
         axios
@@ -45,6 +63,54 @@ const Create = () => {
             })
     }
 
+    let componentToDisplay = <p>Loading...</p>
+
+    if (customer === null) {
+        componentToDisplay = (
+            <div>
+                <IcCheckingInputsLite
+                    onCustomerChange={setCustomer}
+                    onIcDetailsChange={setIcDetails}
+                />
+                {icDetails !== null && (
+                    <CreateCustomerForm
+                        icDetails={icDetails}
+                        onCustomerCreated={onCustomerCreated}
+                    />
+                )}
+            </div>
+        )
+    }
+
+    if (customer !== null && pack === null) {
+        componentToDisplay = (
+            <div>
+                <p>Customer id is {customer.id}</p>
+                <SearchPackByNumber onPackChange={setPack} />
+            </div>
+        )
+    }
+
+    if (customer !== null && pack !== null) {
+        componentToDisplay = (
+            <div>
+                <p>Pack id is {pack.id}</p>
+                <p>Product id is {pack.product_id}</p>
+                <p>Imsi id is {pack.imsi_id}</p>
+                {!loading && !subCreated && (
+                    <Button onClick={createSubscription}>
+                        Create Subscription
+                    </Button>
+                )}
+                {!loading && subCreated && (
+                    <p className="text-green-500">
+                        A new subscription has been created.
+                    </p>
+                )}
+            </div>
+        )
+    }
+
     return (
         <AppLayout
             header={
@@ -56,62 +122,7 @@ const Create = () => {
                 <title>New Subscription</title>
             </Head>
 
-            <MainBody>
-            <div className="flex">
-                    <div className="mr-4">
-                        <NavLink
-                            href="/subscriptions"
-                            active={router.pathname === '/subscriptions'}>
-                            Subscriptions
-                        </NavLink>
-                    </div>
-                    <div className="mr-4">
-                        <NavLink
-                            href="/subscriptions/create"
-                            active={router.pathname === '/subscriptions/create'}>
-                            Create New Subcription
-                        </NavLink>
-                    </div>
-                </div>
-
-                {isEmptyObject(customer) ? (
-                    <IcCheckingInputsLite onCustomerChange={setCustomer} />
-                ) : (
-                    ''
-                )}
-
-                {!isEmptyObject(customer) ? (
-                    <p>Customer id is {customer.id}</p>
-                ) : (
-                    ''
-                )}
-
-                {!isEmptyObject(customer) && isEmptyObject(pack) ? (
-                    <SearchPackByNumber onPackChange={setPack} />
-                ) : (
-                    ''
-                )}
-
-                {!isEmptyObject(pack) ? (
-                    <div>
-                        <p>Pack id is {pack.id}</p>
-                        <p>Product id is {pack.product_id}</p>
-                        <p>Imsi id is {pack.imsi_id}</p>
-                        {!loading && !subCreated && (
-                            <Button onClick={createSubscription}>
-                                Create Subscription
-                            </Button>
-                        )}
-                        {!loading && subCreated && (
-                            <p className="text-green-500">
-                                A new subscription has been created.
-                            </p>
-                        )}
-                    </div>
-                ) : (
-                    ''
-                )}
-            </MainBody>
+            <MainBody>{componentToDisplay}</MainBody>
         </AppLayout>
     )
 }
