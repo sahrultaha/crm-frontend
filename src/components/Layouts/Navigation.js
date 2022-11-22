@@ -40,6 +40,13 @@ const Navigation = ({ user }) => {
                         </div>
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
+                                href="/starter-packs"
+                                active={router.pathname === '/starter-packs'}>
+                                Starter Packs
+                            </NavLink>
+                        </div>
+                        <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <NavLink
                                 href="/imsi"
                                 active={router.pathname === '/imsi'}>
                                 IMSI
