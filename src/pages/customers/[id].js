@@ -62,6 +62,7 @@ const Show = () => {
         const { id: CustomerId } = router.query
         axios (`/api/customers/${CustomerId}`)
             .then(res => {
+                // console.log(res.data)
                 setData(res.data)
                 setHouseNumber(res.data['address'][0]['address']['house_number'])
                 setSimpang(res.data['address'][0]['address']['simpang'])
@@ -165,30 +166,30 @@ const Show = () => {
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             IC Number : {data.ic_number} <br />
-                            IC Type ID : {data.ic_type_id}
+                            IC Type : {data.ic_type.name}
                             <br />
-                            IC Color ID : {data.ic_color_id}
+                            IC Color : {data.ic_color.name}
                             <br />
                             Expired : {data.ic_expiry_date} <br />
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Phone Number : {data.mobile_number}
+                            Phone Number :+{data.country_code} {data.mobile_number}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             Email : {data.email}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Country ID : {data.country_id}
+                            Country : {data.country.name}
                         </div>
                         
                         <div className="p-6 bg-white border-b border-gray-200">
                             Address <br/>
-                            {houseNumber} {floor} {buildingName} {simpang} {street} <br/>
+                            {`${houseNumber},`} {`${floor},`} {`${block},`} <br/>
+                            {`${buildingName},`} {`${simpang},`} {`${street},`} <br/>
                             {village.name}<br/>
                              {postalCode}<br/>
                             {district} <br/>
-                            {data.country_id}
                             
 
                         </div>
