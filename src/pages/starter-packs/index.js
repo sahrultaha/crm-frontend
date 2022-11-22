@@ -41,12 +41,34 @@ const PackTable = ({ isLoading, items, ...props }) => {
         </table>
     )
 }
+const PackNavigation = ({ meta, pageHandler }) => {
+    if (!meta || meta === undefined) {
+        return <div></div>
+    }
+    const pageLinks = []
 
+    for (let i = 1; i <= meta.last_page; i++) {
+        pageLinks.push(
+            <li
+                key={i}
+                id={'page-link-' + i}
+                className="mr-2 cursor-pointer"
+                onClick={() => pageHandler(i)}>
+                {i}
+            </li>,
+        )
+    }
+    return <ul>{pageLinks}</ul>
+}
 const Dashboard = () => {
     const router = useRouter()
-    const [response, setResponse] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [meta, setMeta] = useState()
     const [items, setItems] = useState([])
+
+    const pageHandler = i => {
+        console.log(i)
+    }
 
     const makePaginationUrl = ({ url, page, limit, sort }) => {
         page = page || 1
@@ -63,8 +85,8 @@ const Dashboard = () => {
         axios
             .get(makePaginationUrl({ url: 'api/packs' }))
             .then(resp => {
-                const data = resp.data.data
-                setItems(data)
+                setItems(resp.data.data)
+                setMeta(resp.data.meta)
             })
             .catch(e => {
                 console.error('error fetching data', e)
@@ -74,9 +96,14 @@ const Dashboard = () => {
             })
     }, [router.isReady])
 
+    const pages = []
+
     return (
         <div>
             <PackTable isLoading={loading} items={items}></PackTable>
+            <PackNavigation
+                meta={meta}
+                pageHandler={pageHandler}></PackNavigation>
         </div>
     )
 }
