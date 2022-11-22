@@ -1,9 +1,7 @@
 import { useRouter } from 'next/router'
 import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
-import NavLink from '@/components/NavLink'
 import Head from 'next/head'
-import getPaginationResponse from '@/lib/getPaginationResponse'
 import { useEffect, useState } from 'react'
 import axios from '@/lib/axios'
 
@@ -17,15 +15,16 @@ const PackTable = ({ isLoading, items, ...props }) => {
     if (items.length === 0) {
         return <div>data is empty</div>
     }
-    console.log(items)
 
-    const keys = Object.keys(items[0])
     return (
         <table>
             <thead>
                 <tr>
                     <th>id</th>
                     <th>msisdn</th>
+                    <th>imsi</th>
+                    <th>plan</th>
+                    <th>Activation Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +32,9 @@ const PackTable = ({ isLoading, items, ...props }) => {
                     <tr key={item.id}>
                         <td>{item.id}</td>
                         <td>{item.number.number}</td>
+                        <td>{item.imsi.imsi}</td>
+                        <td>{item.product.name}</td>
+                        <td>{item.installation_date}</td>
                     </tr>
                 ))}
             </tbody>
