@@ -1,44 +1,46 @@
 import { useGetData } from '@/hooks/getData'
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import axios from '@/lib/axios'
+import Button from '@/components/Button'
 
 const SubscriptionList = () => {
-    const router = useRouter()
-    const [data, setData] = useState([[]])
-    // const {
-    //     id,
-    //     data,
-    //     loading,
-    // } = useGetData(`/api/subscription/${id}`)
-    // console.log(data)
+    const {
+        data,
+        loading,
+        currentLastPage,
+        setCurrentPage,
+    } = useGetData('/api/subscription')
 
-    useEffect(() => {
-        if (!router.isReady) return
-        const { id: CustomerId } = router.query
-        axios
-            .get(`/api/subscription/${CustomerId}`)
-            .then(response => {
-                setData(response.data[0])
-            })
-            .catch(error => {
-                console.log('Error fetching subscription details...', error)
-            })
-    }, [router.isReady])
 
     let listItems = []
-    // if (!data) {
+    if (!loading && data.length > 0) {
         listItems = data.map(d => {
             return (
                 <tr key={d.id}>
                     <td>{d.id}</td>
                     <td>{d.subscription_id}</td>
-                    <td>{d.number_id}</td>
-                    <td>{d.imsi_id}</td>
+                    <td>{d.subscription.customer.name}</td>
+                    <td>{d.number.number}</td>
+                    <td>{d.imsi.imsi}</td>
                 </tr>
             )
         })
-    // }
+    }
+
+    const pageLinks = []
+    for (let i = 1; i <= currentLastPage; i++) {
+        pageLinks.push(
+            <li
+                key={i}
+                id={'page-link-' + i}
+                className="mr-2 cursor-pointer"
+                onClick={() => setCurrentPage(i)}>
+                {i}
+            </li>,
+        )
+    }
+
+    if (loading) {
+        return <p>Loading...</p>
+    }
 
     return (
         <div>
@@ -47,12 +49,18 @@ const SubscriptionList = () => {
                     <tr className="text-left">
                         <th>ID</th>
                         <th>Subscription ID</th>
-                        <th>Number ID</th>
-                        <th>IMSI ID</th>
+                        <th>Customer</th>
+                        <th>Number</th>
+                        <th>IMSI</th>
                     </tr>
                 </thead>
                 <tbody>{listItems}</tbody>
             </table>
+
+            <div>
+                <h2>Pages</h2>
+                <ul className="flex items-center">{pageLinks}</ul>
+            </div>
         </div>
     )
 }
