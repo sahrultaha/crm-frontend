@@ -18,6 +18,8 @@ const SubscriptionList = () => {
                     <td>{d.id}</td>
                     <td>{d.subscription_id}</td>
                     <td>{d.subscription.customer.name}</td>
+                    <td>{d.subscription.subscription_type.name}</td>
+                    <td>{d.subscription.subscription_status.name}</td>
                     <td>{d.number.number}</td>
                     <td>{d.imsi.imsi}</td>
                 </tr>
@@ -50,6 +52,8 @@ const SubscriptionList = () => {
                         <th>ID</th>
                         <th>Subscription ID</th>
                         <th>Customer</th>
+                        <th>Subscription Type</th>
+                        <th>Subscription Status</th>
                         <th>Number</th>
                         <th>IMSI</th>
                     </tr>
