@@ -23,7 +23,7 @@ const Index = () => {
                     <div className="mr-4">
                         <NavLink
                             href="/subscriptions"
-                            active={router.pathname === '/imsi'}>
+                            active={router.pathname === '/subscriptions'}>
                             Subscriptions
                         </NavLink>
                     </div>
