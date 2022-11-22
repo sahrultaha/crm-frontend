@@ -11,6 +11,9 @@ const Show = () => {
     const [data, setData] = useState(null)
     const [icUrls, setIcUrls] = useState([])
     const [showModal, setShowModal] = useState(false);
+    const [icColor, setIcColor] = useState('')
+    const [icType, setIcType] = useState('')
+
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
     const [village, setVillage] = useState({id : '', 'name' : ''})
@@ -74,6 +77,8 @@ const Show = () => {
                 setMukim(res.data['address'][0]['address']['mukim']['name'])
                 setDistrict(res.data['address'][0]['address']['district']['name'])
                 setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
+                setIcColor(res.data['ic_color']['name'])
+                setIcType(res.data['ic_type']['name'])
                 setVillage({
                     'id' : res.data['address'][0]['address']['village']['id'],
                     'name' : res.data['address'][0]['address']['village']['name']
@@ -166,9 +171,9 @@ const Show = () => {
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             IC Number : {data.ic_number} <br />
-                            IC Type : {data.ic_type.name ?? ''} 
+                            IC Type : {icType} 
                             <br />
-                            IC Color : {data.ic_color}
+                            IC Color : {icColor}
                             <br />
                             Expired : {data.ic_expiry_date ?? ''} <br />
                         </div>
@@ -180,12 +185,12 @@ const Show = () => {
                             Email : {data.email}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Country : {data.country.name ?? ''}
+                            {/* Country : {data.country.name ?? ''} */}
                         </div>
                         
                         <div className="p-6 bg-white border-b border-gray-200">
                             Address <br/>
-                            {`${houseNumber},`} {`${floor},`} {`${block},`} <br/>
+                            {`${houseNumber},`} {`${floor},` ?? ''} {`${block},` ?? ''} <br/>
                             {`${buildingName},`} {`${simpang},`} {`${street},`} <br/>
                             {village.name}<br/>
                              {postalCode}<br/>
