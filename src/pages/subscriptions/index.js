@@ -27,13 +27,6 @@ const Index = () => {
                             Subscriptions
                         </NavLink>
                     </div>
-                    <div className="mr-4">
-                        <NavLink
-                            href="/subscriptions/create"
-                            active={router.pathname === '/subscriptions/create'}>
-                            Create New Subcription
-                        </NavLink>
-                    </div>
                 </div>
 
                 <SubscriptionList/>
