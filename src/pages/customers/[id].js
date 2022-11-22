@@ -12,6 +12,22 @@ const Show = () => {
     const [data, setData] = useState(null)
     const [icUrls, setIcUrls] = useState([])
     const [showModal, setShowModal] = useState(false);
+    const [district, setDistrict] = useState('-----')
+    const [mukim, setMukim] = useState('-----')
+    const [village, setVillage] = useState({id : '', 'name' : ''})
+    const [postalCode, setPostalCode] = useState('')
+    const [houseNumber, setHouseNumber] = useState('')
+    const [simpang, setSimpang] = useState('')
+    const [street, setStreet] = useState('')
+    const [buildingName, setBuildingName] = useState('')
+    const [block, setBlock] = useState('')
+    const [floor, setFloor] = useState('')
+    const [unit, setUnit] = useState('')
+    const [district_id, setDistrictId] = useState('')
+    const [mukim_id, setMukimId] = useState('')
+    const [village_id, setVillageId] = useState('')
+    const [postal_code_id, setPostalCodeId] = useState('')
+    const [address_id, setAddressID] = useState('')
 
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
@@ -45,10 +61,23 @@ const Show = () => {
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
-        axios
-            .get(`/api/customers/${CustomerId}`)
-            .then(response => {
-                setData(response.data)
+        axios (`/api/customers/${CustomerId}`)
+            .then(res => {
+                setData(res.data)
+                setHouseNumber(res.data['address'][0]['address']['house_number'])
+                setSimpang(res.data['address'][0]['address']['simpang'])
+                setStreet(res.data['address'][0]['address']['street'])
+                setBuildingName(res.data['address'][0]['address']['building_name'])
+                setBlock(res.data['address'][0]['address']['block'])
+                setFloor(res.data['address'][0]['address']['floor'])
+                setUnit(res.data['address'][0]['address']['unit'])
+                setMukim(res.data['address'][0]['address']['mukim']['name'])
+                setDistrict(res.data['address'][0]['address']['district']['name'])
+                setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
+                setVillage({
+                    'id' : res.data['address'][0]['address']['village']['id'],
+                    'name' : res.data['address'][0]['address']['village']['name']
+                })
             })
             .catch(error => {
                 console.log('Error fetching customer details...', error)
@@ -62,7 +91,6 @@ const Show = () => {
         }
 
         try {
-            console.log(data)
             for (const fileId of data.file_ids) {
                 const resp = await axios.get(`/api/files/${fileId}`)
                 setIcUrls(prevState => [
@@ -127,6 +155,11 @@ const Show = () => {
                             Customer Name : {data.name}
                         </div>
 
+
+                        <div className="p-6 bg-white border-b border-gray-200">
+                           Account Category: {data.account_category.name}
+                        </div>
+
                         <div className="p-6 bg-white border-b border-gray-200">
                             Date of Birth: {data.birth_date}
                         </div>
@@ -149,6 +182,19 @@ const Show = () => {
                         <div className="p-6 bg-white border-b border-gray-200">
                             Country ID : {data.country_id}
                         </div>
+                        
+                        <div className="p-6 bg-white border-b border-gray-200">
+                            Address <br/>
+                            {houseNumber} {floor} {buildingName} {simpang} {street} <br/>
+                            {village.name}<br/>
+                             {postalCode}<br/>
+                            {district} <br/>
+                            {data.country_id}
+                            
+
+                        </div>
+
+
                         <div className="p-6 bg-white border-b border-gray-200">
                             {icUrls.map(obj => (
                                 <img
