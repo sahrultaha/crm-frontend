@@ -7,7 +7,7 @@ const SubscriptionList = () => {
         loading,
         currentLastPage,
         setCurrentPage,
-    } = useGetData('/api/subscription')
+    } = useGetData('/api/subscriptions')
 
 
     let listItems = []

@@ -185,7 +185,7 @@ const Show = () => {
                         
                         <div className="p-6 bg-white border-b border-gray-200">
                             Address <br/>
-                            {houseNumber} {floor} {buildingName} {simpang} {street} <br/>
+                            {houseNumber} {unit} {floor} {block} {buildingName} {simpang} {street} <br/>
                             {village.name}<br/>
                              {postalCode}<br/>
                             {district} <br/>
@@ -204,7 +204,6 @@ const Show = () => {
                                 />
                             ))}
                         </div>
-                        <SubscriptionList/>
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex items-center justify-end mt-4">
                                 <Button className="ml-1" onClick={gotoUpdate}>Edit</Button>
