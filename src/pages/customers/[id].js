@@ -40,7 +40,7 @@ const Show = () => {
             .delete(`/api/customers/${id}`)
             .then(response => {
                 const id = response.data.id
-                console.log(response)
+                // console.log(response)
                 router.push('/customers')
             })
             .catch(error => {
@@ -65,7 +65,7 @@ const Show = () => {
         const { id: CustomerId } = router.query
         axios (`/api/customers/${CustomerId}`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setData(res.data)
                 setHouseNumber(res.data['address'][0]['address']['house_number'])
                 setSimpang(res.data['address'][0]['address']['simpang'])
