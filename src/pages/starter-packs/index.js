@@ -66,7 +66,7 @@ const PackTable = ({ isLoading, items }) => {
 const Dashboard = () => {
     const router = useRouter()
     const [loading, setLoading] = useState(true)
-    const [meta, setMeta] = useState({ current_page : 1, last_page : 1})
+    const [meta, setMeta] = useState({ current_page: 1, last_page: 1 })
     const [items, setItems] = useState([])
     const [page, setPage] = useState(1)
 
