@@ -1,4 +1,5 @@
 import  TimestampDiv  from "./TimestampDiv.js";
+import Link from "next/link.js";
 
 const CustomerTable = props => {
     const data = props.data || []
@@ -34,13 +35,16 @@ const CustomerTable = props => {
                                     <th className="border-b dark:border-slate-600 font-medium p-4 pr-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
                                         Created At
                                     </th>
+                                    <th className="border-b dark:border-slate-600 font-medium p-4 pr-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                                        &nbsp;
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className="bg-white dark:bg-slate-800">
                                 {data.map(customer => (
                                 <tr key={customer.id}>
-                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{customer.id}</td>
-                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">
+                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">{customer.id}</td>
+                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
                                         {customer.name}
                                     </td>
                                     <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
@@ -57,6 +61,9 @@ const CustomerTable = props => {
                                     </td>
                                     <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
                                        <TimestampDiv time={customer.created_at} />
+                                    </td>
+                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
+                                      <Link href={`/customers/${customer.id}`}><a>View</a></Link> <Link href={`/customers/update?id=${customer.id}`}><a>Edit</a></Link>
                                     </td>
                                 </tr>
                                 ))}
