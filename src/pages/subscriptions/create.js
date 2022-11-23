@@ -7,17 +7,20 @@ import MainBody from '@/components/MainBody'
 import IcCheckingInputsLite from '@/components/forms/subscriptions/IcCheckingInputsLite'
 import CreateCustomerForm from '@/components/forms/customer/CreateCustomerForm'
 import SearchPackByNumber from '@/components/forms/subscriptions/SearchPackByNumber'
+import CreatePackForm from '@/components/forms/packs/CreatePackForm'
 
 const Create = () => {
     const [customer, setCustomer] = useState(null)
     const [pack, setPack] = useState(null)
+    const [packSearchComplete, setPackSearchComplete] = useState(false)
     const [icDetails, setIcDetails] = useState(null)
+    const [number, setNumber] = useState('')
     const [loading, setLoading] = useState(false)
     const [subCreated, setSubCreated] = useState(false)
 
     const onCustomerCreated = id => {
         if (loading) return
-        console.log('on customer created id', id)
+
         setLoading(true)
         axios
             .get(`/api/customers/${id}`)
@@ -83,7 +86,14 @@ const Create = () => {
         componentToDisplay = (
             <div>
                 <p>Customer id is {customer.id}</p>
-                <SearchPackByNumber onPackChange={setPack} />
+                <SearchPackByNumber
+                    onPackChange={setPack}
+                    onNumberChange={setNumber}
+                    onPackSearchCompleteChange={setPackSearchComplete}
+                />
+                {packSearchComplete && (
+                    <CreatePackForm number={number} onPackCreated={setPack} />
+                )}
             </div>
         )
     }
