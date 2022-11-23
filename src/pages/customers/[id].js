@@ -30,7 +30,7 @@ const Show = () => {
     const [village_id, setVillageId] = useState('')
     const [postal_code_id, setPostalCodeId] = useState('')
     const [address_id, setAddressID] = useState('')
-
+    const [country, setCountry] = useState('')
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
@@ -40,7 +40,7 @@ const Show = () => {
             .delete(`/api/customers/${id}`)
             .then(response => {
                 const id = response.data.id
-                console.log(response)
+                // console.log(response)
                 router.push('/customers')
             })
             .catch(error => {
@@ -65,7 +65,7 @@ const Show = () => {
         const { id: CustomerId } = router.query
         axios (`/api/customers/${CustomerId}`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setData(res.data)
                 setHouseNumber(res.data['address'][0]['address']['house_number'])
                 setSimpang(res.data['address'][0]['address']['simpang'])
@@ -77,8 +77,9 @@ const Show = () => {
                 setMukim(res.data['address'][0]['address']['mukim']['name'])
                 setDistrict(res.data['address'][0]['address']['district']['name'])
                 setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
-                setIcColor(res.data['ic_color']['name'])
-                setIcType(res.data['ic_type']['name'])
+                setIcColor(res.data['ic_color']['name'] ?? '')
+                setIcType(res.data['ic_type']['name'] ?? '')
+                setCountry(res.data['country']['name'] ?? '')
                 setVillage({
                     'id' : res.data['address'][0]['address']['village']['id'],
                     'name' : res.data['address'][0]['address']['village']['name']
@@ -185,7 +186,7 @@ const Show = () => {
                             Email : {data.email}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
-                            {/* Country : {data.country.name ?? ''} */}
+                            Country : {country}
                         </div>
                         
                         <div className="p-6 bg-white border-b border-gray-200">
