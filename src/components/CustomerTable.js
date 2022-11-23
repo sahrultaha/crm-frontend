@@ -43,8 +43,8 @@ const CustomerTable = props => {
                             <tbody className="bg-white dark:bg-slate-800">
                                 {data.map(customer => (
                                 <tr key={customer.id}>
-                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{customer.id}</td>
-                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 text-slate-500 dark:text-slate-400">
+                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">{customer.id}</td>
+                                    <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
                                         {customer.name}
                                     </td>
                                     <td className="border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400">
