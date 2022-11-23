@@ -30,7 +30,7 @@ const Show = () => {
     const [village_id, setVillageId] = useState('')
     const [postal_code_id, setPostalCodeId] = useState('')
     const [address_id, setAddressID] = useState('')
-
+    const [country, setCountry] = useState('')
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
@@ -77,8 +77,9 @@ const Show = () => {
                 setMukim(res.data['address'][0]['address']['mukim']['name'])
                 setDistrict(res.data['address'][0]['address']['district']['name'])
                 setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
-                setIcColor(res.data['ic_color']['name'])
-                setIcType(res.data['ic_type']['name'])
+                setIcColor(res.data['ic_color']['name'] ?? '')
+                setIcType(res.data['ic_type']['name'] ?? '')
+                setCountry(res.data['country']['name'] ?? '')
                 setVillage({
                     'id' : res.data['address'][0]['address']['village']['id'],
                     'name' : res.data['address'][0]['address']['village']['name']
@@ -185,7 +186,7 @@ const Show = () => {
                             Email : {data.email}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
-                            {/* Country : {data.country.name ?? ''} */}
+                            Country : {country}
                         </div>
                         
                         <div className="p-6 bg-white border-b border-gray-200">
