@@ -42,6 +42,9 @@ const Update = () => {
 
 
     const [countryId, setCountryId] = useState(1)
+
+    const [countries, setCountriesList] = useState([])
+
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
@@ -100,6 +103,23 @@ const Update = () => {
     const onIcFrontChangeHandler = event => setIcFront(event.target.files[0])
     const onIcBackChangeHandler = event => setIcBack(event.target.files[0])
 
+    useEffect(() => {
+        if (!router.isReady) return
+        const { id: CustomerId } = router.query
+        // console.log("customer id : " + CustomerId)
+
+        axios.get(`/api/country`)
+            .then(res => {
+                // console.log(res.data)
+                setCountriesList(res.data)
+            })
+            .catch(error => {
+                // setData(null)
+            })
+            .finally(() => {
+
+            })
+    }, [router.isReady])
 
     useEffect(() => {
         if (!router.isReady) return
@@ -659,16 +679,16 @@ const Update = () => {
 
                     />
 
-                    <div className="mt-4">
+                <div className="my-4">
                         <Label htmlFor="countryId">Country</Label>
-
                         <select
-                            id="countryId"
-                            value={countryId}
-                            required
-                            onChange={onCountryIdChangeHandler}>
-                            <option value={1}>Brunei</option>
-                            <option value={2}>Malaysia</option>
+                        id="countryId"
+                        value={countryId}
+                        required
+                        onChange={ev => setCountryId(ev.target.value)}>
+                            {countries.map((country) => (
+                            <option value={country.id}>{country.name}</option>
+                            ))}
                         </select>
 
                         <InputError

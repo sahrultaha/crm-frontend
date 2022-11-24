@@ -3,14 +3,21 @@ import Label from '@/components/Label'
 import { useState, useEffect } from 'react'
 import axios from '@/lib/axios'
 
-const SearchPackByNumber = ({ onPackChange, ...props }) => {
+const SearchPackByNumber = ({
+    onPackChange,
+    onPackSearchCompleteChange,
+    onNumberChange,
+    ...props
+}) => {
     const [number, setNumber] = useState('')
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (number === '') {
+            if (number === '' || number.length < 7) {
                 return
             }
+
+            onNumberChange(number)
 
             const endpoint = '/api/packs?'
             const queryString = new URLSearchParams('number')
@@ -23,10 +30,10 @@ const SearchPackByNumber = ({ onPackChange, ...props }) => {
                     if (res.data.data.length > 0) {
                         const firstResult = res.data.data[0]
                         onPackChange({ ...firstResult })
-                        return
                     }
                 })
                 .catch(e => console.error('Pack search failed', e))
+                .finally(() => onPackSearchCompleteChange(true))
         }, 500)
 
         return () => clearTimeout(timer)
