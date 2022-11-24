@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import Button from '@/components/Button'
 import axios from '@/lib/axios'
 import React, { useState, useEffect } from 'react'
-import SubscriptionList from '@/components/lists/SubscriptionList'
 
 const Show = () => {
     const router = useRouter()
@@ -32,6 +31,8 @@ const Show = () => {
     const [postal_code_id, setPostalCodeId] = useState('')
     const [address_id, setAddressID] = useState('')
     const [country, setCountry] = useState('')
+    const [listItems, setListItems] = useState([])
+
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
@@ -61,8 +62,20 @@ const Show = () => {
                 }
                 console.log(error.config)
             })
-
     }
+
+    useEffect(() => {
+        if (!router.isReady) return
+        const { id: CustomerId } = router.query
+        axios (`/api/subscriptions/${CustomerId}`)
+            .then(res => {
+                console.log('numbers')
+                console.log(res.data)
+            })
+            .catch(error => {
+                console.log('Error fetching customer subscriptions...', error)
+            })
+    }, [router.isReady])
 
     useEffect(() => {
         if (!router.isReady) return
