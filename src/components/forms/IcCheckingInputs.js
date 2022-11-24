@@ -24,12 +24,12 @@ const IcCheckingInputs = ({
 }) => {
 
     const [customer, setCustomer] = useState(null)
-    useEffect(() =>{
-        if(oriIcNumber !== icNumber){
-            updateMode=true
-        } 
+    useEffect(() => {
+        if (oriIcNumber !== icNumber) {
+            updateMode = true
+        }
         // console.log(icNumber,"changed")
-    },[icNumber,icTypeId])
+    }, [icNumber, icTypeId])
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -37,23 +37,27 @@ const IcCheckingInputs = ({
                 console.log('ic number or ic type id is empty...')
                 return
             }
-            if(updateMode == false) return
-            
-            if(oriIcNumber == icNumber && oriIcTypeId == icTypeId){
+            if (updateMode == false) return
+
+            if (oriIcNumber == icNumber && oriIcTypeId == icTypeId) {
                 setIcNumber(oriIcNumber)
                 setIcTypeId(oriIcTypeId)
-                setIcColorId(oriIcColorId)
-                setIcExpiryDate(oriExpiryDate)
                 return
-            } 
-            
+            }
+
+            if (oriExpiryDate != icExpiryDate || icColorId != oriIcColorId) {
+                setIcExpiryDate(icExpiryDate)
+                setIcColorId(icColorId)
+                return
+            }
+
             const endpoint = '/api/customers/search?'
             const queryString = new URLSearchParams('ic_number&ic_type_id')
 
             queryString.set('ic_number', icNumber)
             queryString.set('ic_type_id', icTypeId)
-           
-                axios
+
+            axios
                 .get(`${endpoint}${queryString}`)
                 .then(res => {
                     if (res.data.length > 0) {
@@ -69,12 +73,12 @@ const IcCheckingInputs = ({
                     setCustomer(null)
                 })
                 .catch(e => console.error('IC number search failed', e))
-           
+
         }, 500)
 
 
         return () => clearTimeout(timer)
-    }, [icNumber, icTypeId,updateMode,oriIcNumber,oriIcTypeId,icExpiryDate,icColorId])
+    }, [icNumber, icTypeId, updateMode, oriIcNumber, oriIcTypeId, icExpiryDate, icColorId])
 
 
     useEffect(() => {
@@ -102,7 +106,21 @@ const IcCheckingInputs = ({
 
     const onIcExpiryDateChangeHandler = event => {
         const value = event.target.value.trim()
+        const expiry_date = new Date(value).setHours(0, 0, 0, 0)
+        const todayDate = new Date().setHours(0, 0, 0, 0)
+
+        // console.log("Today", todayDate)
+        // console.log("expiry", expiry_date)
+        // console.log()
+
+        if ((expiry_date >= 0) && (expiry_date <= todayDate)) {
+            alert("Expiry date cannot be today or in the past")
+            setIcExpiryDate(oriExpiryDate)
+            return
+        }
+        console.log(value)
         setIcExpiryDate(value)
+        setCustomer(null)
     }
 
     let message = null

@@ -17,7 +17,7 @@ const Show = () => {
 
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
-    const [village, setVillage] = useState({id : '', 'name' : ''})
+    const [village, setVillage] = useState({ id: '', 'name': '' })
     const [postalCode, setPostalCode] = useState('')
     const [houseNumber, setHouseNumber] = useState('')
     const [simpang, setSimpang] = useState('')
@@ -64,27 +64,33 @@ const Show = () => {
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
-        axios (`/api/customers/${CustomerId}`)
+        axios(`/api/customers/${CustomerId}`)
             .then(res => {
-                // console.log(res.data)
+                console.log(res.data)
                 setData(res.data)
-                setHouseNumber(res.data['address'][0]['address']['house_number'])
-                setSimpang(res.data['address'][0]['address']['simpang'])
-                setStreet(res.data['address'][0]['address']['street'])
-                setBuildingName(res.data['address'][0]['address']['building_name'])
-                setBlock(res.data['address'][0]['address']['block'])
-                setFloor(res.data['address'][0]['address']['floor'])
-                setUnit(res.data['address'][0]['address']['unit'])
-                setMukim(res.data['address'][0]['address']['mukim']['name'])
-                setDistrict(res.data['address'][0]['address']['district']['name'])
-                setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
                 setIcColor(res.data['ic_color']['name'] ?? '')
                 setIcType(res.data['ic_type']['name'] ?? '')
                 setCountry(res.data['country']['name'] ?? '')
-                setVillage({
-                    'id' : res.data['address'][0]['address']['village']['id'],
-                    'name' : res.data['address'][0]['address']['village']['name']
-                })
+                console.log(res.data['address'][0]['address']['building_name'])
+
+                if ((res.data['address']).length > 0) {
+                    setHouseNumber(res.data['address'][0]['address']['house_number'])
+                    setSimpang(res.data['address'][0]['address']['simpang'])
+                    setStreet(res.data['address'][0]['address']['street'])
+                    setBuildingName(res.data['address'][0]['address']['building_name'])
+                    setBlock(res.data['address'][0]['address']['block'])
+                    setFloor(res.data['address'][0]['address']['floor'])
+                    setUnit(res.data['address'][0]['address']['unit'])
+                    setMukim(res.data['address'][0]['address']['mukim']['name'])
+                    setDistrict(res.data['address'][0]['address']['district']['name'])
+                    setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
+                    setVillage({
+                        'id': res.data['address'][0]['address']['village']['id'],
+                        'name': res.data['address'][0]['address']['village']['name']
+                    })
+
+                }
+
             })
             .catch(error => {
                 console.log('Error fetching customer details...', error)
@@ -136,7 +142,8 @@ const Show = () => {
                 </div>
             </AppLayout>
         )
-
+    // console.log("Housenumber not empty string?",houseNumber !== '',"housenumber is not null",houseNumber !== null )
+    // console.log("houseNumber",typeof houseNumber)
     return (
         <AppLayout
             header={
@@ -164,7 +171,7 @@ const Show = () => {
 
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                           Account Category: {data.account_category.name}
+                            Account Category: {data.account_category.name}
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
@@ -173,7 +180,7 @@ const Show = () => {
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             IC Number : {data.ic_number} <br />
-                            IC Type : {icType} 
+                            IC Type : {icType}
                             <br />
                             IC Color : {icColor}
                             <br />
@@ -189,15 +196,15 @@ const Show = () => {
                         <div className="p-6 bg-white border-b border-gray-200">
                             Country : {country}
                         </div>
-                        
+
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Address <br/>
-                            {`${houseNumber},`} {`${floor},` ?? ''} {`${block},` ?? ''} <br/>
-                            {`${buildingName},`} {`${simpang},`} {`${street},`} <br/>
-                            {village.name}<br/>
-                             {postalCode}<br/>
-                            {district} <br/>
-                            
+                            Address <br />
+                            {houseNumber !== null ? `${houseNumber},` : ``} {floor !== null ? `${floor},` : ``} {block !== null ? `${block},` : ``} <br />
+                            {buildingName !== null ? `${buildingName},` : ``} {simpang !== null ? `${simpang},` : ``} {street !== null ? `${street},` : ``} <br />
+                            {village.name !== '' || village.name !== null ? `${village.name},` : ``}<br />
+                            {postalCode !== '' || postalCode !== null ? `${postalCode},` : ``}<br />
+                            {district !== '-----' || district !== null ? `${district},` : ``} <br />
+
 
                         </div>
 
