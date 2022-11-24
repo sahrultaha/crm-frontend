@@ -41,21 +41,21 @@ const Navigation = ({ user }) => {
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
                                 href="/starter-packs"
-                                active={router.pathname === '/starter-packs'}>
+                                active={router.pathname.match(/^\/starter-packs\/?/g)}>
                                 Starter Packs
                             </NavLink>
                         </div>
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
                                 href="/imsi"
-                                active={router.pathname === '/imsi'}>
+                                active={router.pathname.match(/^\/imsi/)}>
                                 IMSI
                             </NavLink>
                         </div>
                         <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                             <NavLink
                                 href="/subscriptions"
-                                active={router.pathname === '/subscriptions'}>
+                                active={router.pathname.match(/^subscriptions/)}>
                                 Subscriptions
                             </NavLink>
                         </div>
