@@ -35,6 +35,9 @@ const Show = () => {
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
+    function createSubscription() {
+        router.push(`/subscriptions/create`)
+    }
 
     function delCustomer() {
         axios
@@ -197,10 +200,11 @@ const Show = () => {
                             {village.name}<br/>
                              {postalCode}<br/>
                             {district} <br/>
-                            
-
                         </div>
 
+                        <div className="p-6 bg-white border-b border-gray-200">
+                            Subscriptions <br/>
+                        </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             {icUrls.map(obj => (
@@ -213,7 +217,8 @@ const Show = () => {
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex items-center justify-end mt-4">
-                                <Button className="ml-1" onClick={gotoUpdate}>Edit</Button>
+                                <Button className="ml-1" onClick={createSubscription}>Create New Subscription</Button>
+                                <Button className="ml-2" onClick={gotoUpdate}>Edit</Button>
                                 <Button className="ml-2" onClick={() => setShowModal(true)}>Delete</Button>
                             </div>
                         </div>
