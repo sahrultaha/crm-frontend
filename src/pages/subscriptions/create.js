@@ -1,9 +1,11 @@
 import AppLayout from '@/components/Layouts/AppLayout'
+import { useRouter } from 'next/router'
 import Button from '@/components/Button'
 import Head from 'next/head'
 import { useState } from 'react'
 import axios from '@/lib/axios'
 import MainBody from '@/components/MainBody'
+import NavLink from '@/components/NavLink'
 import IcCheckingInputsLite from '@/components/forms/subscriptions/IcCheckingInputsLite'
 import CreateCustomerForm from '@/components/forms/customer/CreateCustomerForm'
 import SearchPackByNumber from '@/components/forms/subscriptions/SearchPackByNumber'
@@ -17,6 +19,7 @@ const Create = () => {
     const [number, setNumber] = useState('')
     const [loading, setLoading] = useState(false)
     const [subCreated, setSubCreated] = useState(false)
+    const router = useRouter()
 
     const onCustomerCreated = id => {
         if (loading) return

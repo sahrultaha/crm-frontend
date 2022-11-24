@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Button from '@/components/Button'
 import axios from '@/lib/axios'
 import React, { useState, useEffect } from 'react'
+import SubscriptionList from '@/components/lists/SubscriptionList'
 
 const Show = () => {
     const router = useRouter()
@@ -216,7 +217,6 @@ const Show = () => {
                                 <Button className="ml-2" onClick={() => setShowModal(true)}>Delete</Button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
