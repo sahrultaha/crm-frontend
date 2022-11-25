@@ -82,7 +82,7 @@ const Show = () => {
     for (let i = 1; i <= numbercount; i++) {
         listItems = number.map(n => {
             return (
-                <li key={n.number}>{n.number.number}</li>
+                <li key={n.id}>{n.number.number}</li>
             )
         })
     }
