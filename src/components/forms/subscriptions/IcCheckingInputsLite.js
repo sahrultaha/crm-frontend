@@ -83,6 +83,19 @@ const IcCheckingInputsLite = ({
 
     const onIcExpiryDateChangeHandler = event => {
         const value = event.target.value.trim()
+        const expiry_date = new Date(value).setHours(0, 0, 0, 0)
+        const todayDate = new Date().setHours(0, 0, 0, 0)
+
+        // console.log("Today",todayDate)
+        // console.log("expiry",expiry_date)
+        // console.log()
+
+        if ((expiry_date >= 0) && (expiry_date <= todayDate)) {
+            alert("Expiry date cannot be today or in the past")
+            setIcExpiryDate('')
+            onIcDetailsChange(null)
+            return
+        }
         setIcExpiryDate(value)
         setCustomer(null)
     }
