@@ -42,6 +42,24 @@ const CreateCustomerForm = ({ icDetails, onCustomerCreated = null }) => {
     const [icBack, setIcBack] = useState('')
     const [errors, setErrors] = useState([])
 
+    const onBirthDateChangeHandler = event => {
+        const value = event.target.value.trim()
+        const allowedAge = 12
+
+        const allowedDate = new Date(new Date().setFullYear(new Date().getFullYear() - allowedAge))
+
+        //convert into unix datetime
+        allowedDate = allowedDate.setHours(0, 0, 0, 0)
+        const DOB = new Date(value).setHours(0, 0, 0, 0)
+
+        if (DOB > allowedDate) {
+            alert("Age must be " + allowedAge + " years old and above")
+            setBirthDate('')
+            return
+        }
+        setBirthDate(value)
+    }
+
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
@@ -530,7 +548,7 @@ const CreateCustomerForm = ({ icDetails, onCustomerCreated = null }) => {
                     value={birthDate}
                     className="block mt-1 w-full"
                     required
-                    onChange={ev => setBirthDate(ev.target.value)}
+                    onChange={onBirthDateChangeHandler}
                 />
 
                 {errors.birth_date && (

@@ -48,6 +48,7 @@ const Update = () => {
     const [customerTitleId, setCustomerTitleId] = useState('')
     const [accountCategoryId, setAccountCategoryId] = useState(1)
     const [birthDate, setBirthDate] = useState('')
+    const [oribirthDate, setoriBirthDate] = useState('')
     const [address, setAddress] = useState(null)
 
     const [district, setDistrict] = useState('-----')
@@ -94,8 +95,24 @@ const Update = () => {
         setCustomerTitleId(event.target.value)
     const onAccountCategoryIdChangeHandler = event =>
         setAccountCategoryId(event.target.value)
-    const onBirthDateChangeHandler = event =>
-        setBirthDate(event.target.value.trim())
+    const onBirthDateChangeHandler = event => {
+        const value = event.target.value.trim()
+        const allowedAge = 12
+
+        const allowedDate = new Date(new Date().setFullYear(new Date().getFullYear() - allowedAge))
+
+        //convert into unix datetime
+        allowedDate = allowedDate.setHours(0, 0, 0, 0)
+        const DOB = new Date(value).setHours(0, 0, 0, 0)
+
+        if (DOB > allowedDate) {
+            alert("Age must be " + allowedAge + " years old and above")
+            console.log(birthDate)
+            setBirthDate(oribirthDate)
+            return
+        }
+        setBirthDate(value)
+    }
     const onAddressChangeHandler = val => {
         setAddress(val)
     }
@@ -155,6 +172,7 @@ const Update = () => {
                 setCustomerTitleId(res.data['customer_title_id'] ?? "")
                 setAccountCategoryId(res.data['account_category_id'])
                 setBirthDate(res.data['birth_date'])
+                setoriBirthDate(res.data['birth_date'])
                 setAddressID(res.data['address'][0]['address_id'] ?? '')
                 setHouseNumber(res.data['address'][0]['address']['house_number'] ?? '')
                 setSimpang(res.data['address'][0]['address']['simpang'] ?? '')
