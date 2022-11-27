@@ -1,14 +1,13 @@
-import Link from 'next/link'
+
 import { useRouter } from 'next/router'
 import * as React from 'react'
 import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
-import NavLink from '@/components/NavLink'
 import Head from 'next/head'
-import ImsiBulkUpload from '@/components/forms/imsi/ImsiBulkUpload'
 import PackNav from '@/components/forms/packs/PackNav'
+import FileUpload from '@/components/forms/FileUpload'
 
-const BulkUpload = () => {
+const Upload = () => {
     const router = useRouter()
     return (
         <AppLayout
@@ -25,10 +24,11 @@ const BulkUpload = () => {
                     <PackNav></PackNav>
                 </div>
                 <div className="flex flex-row">
+                    <FileUpload relation_id='1' relation_type_id='1' file_category_id="1"></FileUpload>
                 </div>
             </MainBody>
         </AppLayout>
     )
 }
 
-export default BulkUpload
+export default Upload
