@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import Button from '@/components/Button'
 import axios from '@/lib/axios'
 import React, { useState, useEffect } from 'react'
-import SubscriptionList from '@/components/lists/SubscriptionList'
 
 const Show = () => {
     const router = useRouter()
@@ -32,6 +31,9 @@ const Show = () => {
     const [postal_code_id, setPostalCodeId] = useState('')
     const [address_id, setAddressID] = useState('')
     const [country, setCountry] = useState('')
+    const [number, setNumber] = useState(null)
+    const [numbercount, setNumberCount] = useState(null)
+
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
@@ -61,7 +63,28 @@ const Show = () => {
                 }
                 console.log(error.config)
             })
+    }
 
+    useEffect(() => {
+        if (!router.isReady) return
+        const { id: CustomerId } = router.query
+        axios (`/api/subscriptions/${CustomerId}`)
+            .then(res => {
+                setNumber(res.data.data)
+                setNumberCount(res.data.data.length)
+            })
+            .catch(error => {
+                console.log('Error fetching customer subscriptions...', error)
+            })
+    }, [router.isReady])   
+
+    let listItems = []
+    for (let i = 1; i <= numbercount; i++) {
+        listItems = number.map(n => {
+            return (
+                <li key={n.id}>{n.number.number}</li>
+            )
+        })
     }
 
     useEffect(() => {
@@ -210,7 +233,8 @@ const Show = () => {
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Subscriptions <br/>
+                            Subscriptions ({numbercount})<br/>
+                            <ul>{listItems}</ul>
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
