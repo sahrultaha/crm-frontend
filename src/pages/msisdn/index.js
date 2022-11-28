@@ -3,6 +3,7 @@ import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
 import NavLink from '@/components/NavLink'
 import Head from 'next/head'
+import MsisdnList from '@/components/lists/MsisdnList'
 
 const Index = () => {
     const router = useRouter()
@@ -34,6 +35,8 @@ const Index = () => {
                         </NavLink>
                     </div>
                 </div>
+
+                <MsisdnList/>
             </MainBody>
         </AppLayout>
     )
