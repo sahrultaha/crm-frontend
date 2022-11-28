@@ -49,7 +49,7 @@ const Upload = () => {
                     <FileUpload
                         relation_id="1"
                         relation_type_id="1"
-                        file_category_id="1"></FileUpload>
+                        file_category_id="4"></FileUpload>
                 </div>
             </MainBody>
         </AppLayout>
