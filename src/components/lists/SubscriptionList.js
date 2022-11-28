@@ -9,7 +9,6 @@ const SubscriptionList = () => {
         setCurrentPage,
     } = useGetData('/api/subscriptions')
 
-
     let listItems = []
     if (!loading && data.length > 0) {
         listItems = data.map(d => {
