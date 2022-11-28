@@ -34,7 +34,6 @@ const Index = () => {
                         </NavLink>
                     </div>
                 </div>
-
             </MainBody>
         </AppLayout>
     )
