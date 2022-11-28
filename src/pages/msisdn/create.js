@@ -8,6 +8,7 @@ import InputError from '@/components/InputError'
 import { useState } from 'react'
 import axios from '@/lib/axios'
 import MainBody from '@/components/MainBody'
+import NavLink from '@/components/NavLink'
 
 const Create = () => {
     const router = useRouter()
@@ -24,11 +25,6 @@ const Create = () => {
     
     const submitForm = async event => {
         event.preventDefault()
-
-        console.log(number)
-        console.log(numberTypeId)
-        console.log(numberStatusId)
-        console.log(numberCategoryId)
 
         const data = {
             number: number,
@@ -54,7 +50,7 @@ const Create = () => {
             .post('/api/msisdn', data)
             .then(async res => {
                 console.log('new number id is', res.data.id)
-                router.push('/msisdn/create')
+                router.push('/msisdn')
             })
             .catch(error => {
                 console.log('error!')
@@ -85,82 +81,100 @@ const Create = () => {
             </Head>
 
             <MainBody>
-                <form className='mx-auto max-w-screen-sm' onSubmit={submitForm}>
-                    <div>
-                        <Label htmlFor="number">Number</Label>
-                        <Input
-                            id="number"
-                            type="text"
-                            value={number}
-                            className="block mt-1 w-full"
-                            onChange={onNumberChange}
-                            required
-                        />
-                        <InputError
-                            messages={errors.number}
-                            className="mt-2"
-                        />
+                <div className="flex">
+                    <div className="mr-4">
+                        <NavLink
+                            href="/msisdn"
+                            active={router.pathname === '/msisdn'}>
+                            MSISDN
+                        </NavLink>
                     </div>
-
-                    <div className="mt-4">
-                        <Label htmlFor="numberTypeId">Number Type</Label>
-
-                        <select
-                            id="numberTypeId"
-                            value={numberTypeId}
-                            onChange={onNumberTypeIdChange}>
-                            <option>Select One</option>
-                            <option value={1}>Prepaid</option>
-                            <option value={2}>Postpaid</option>
-                        </select>
-
-                        <InputError
-                            messages={errors.numberTypeId}
-                            className="mt-2"
-                        />
+                    <div className="mr-4">
+                        <NavLink
+                            href="/msisdn/create"
+                            active={router.pathname === '/msisdn/create'}>
+                            Create New MSISDN
+                        </NavLink>
                     </div>
+                </div>
+                <div className="flex">
+                    <form className='mx-auto max-w-screen-sm' onSubmit={submitForm}>
+                        <div>
+                            <Label htmlFor="number">Number</Label>
+                            <Input
+                                id="number"
+                                type="text"
+                                value={number}
+                                className="block mt-1 w-full"
+                                onChange={onNumberChange}
+                                required
+                            />
+                            <InputError
+                                messages={errors.number}
+                                className="mt-2"
+                            />
+                        </div>
 
-                    <div className="mt-4">
-                        <Label htmlFor="numberStatusId">Number Status</Label>
+                        <div className="mt-4">
+                            <Label htmlFor="numberTypeId">Number Type</Label>
 
-                        <select
-                            id="numberStatusId"
-                            value={numberStatusId}
-                            onChange={onNumberStatusIdChange}>
-                            <option>Select One</option>
-                            <option value={1}>Available</option>
-                            <option value={2}>Active</option>
-                            <option value={3}>Terminated</option>
-                        </select>
+                            <select
+                                id="numberTypeId"
+                                value={numberTypeId}
+                                onChange={onNumberTypeIdChange}>
+                                <option>Select One</option>
+                                <option value={1}>Prepaid</option>
+                                <option value={2}>Postpaid</option>
+                            </select>
 
-                        <InputError
-                            messages={errors.numberStatusId}
-                            className="mt-2"
-                        />
-                    </div>
+                            <InputError
+                                messages={errors.numberTypeId}
+                                className="mt-2"
+                            />
+                        </div>
 
-                    <div className="mt-4">
-                        <Label htmlFor="numberCategoryId">Number Category</Label>
+                        <div className="mt-4">
+                            <Label htmlFor="numberStatusId">Number Status</Label>
 
-                        <select
-                            id="numberCategoryId"
-                            value={numberCategoryId}
-                            onChange={onNumberCategoryIdChange}>
-                            <option>Select One</option>
-                            <option value={1}>Normal</option>
-                            <option value={2}>Gold</option>
-                        </select>
+                            <select
+                                id="numberStatusId"
+                                value={numberStatusId}
+                                onChange={onNumberStatusIdChange}>
+                                <option>Select One</option>
+                                <option value={1}>Available</option>
+                                <option value={2}>Active</option>
+                                <option value={3}>Terminated</option>
+                            </select>
 
-                        <InputError
-                            messages={errors.numberCategoryId}
-                            className="mt-2"
-                        />
-                    </div>
+                            <InputError
+                                messages={errors.numberStatusId}
+                                className="mt-2"
+                            />
+                        </div>
 
-                    <div className="flex items-center justify-end mt-4">
-                        <Button className="ml-4">Create</Button>
-                    </div>
-                </form>
+                        <div className="mt-4">
+                            <Label htmlFor="numberCategoryId">Number Category</Label>
+
+                            <select
+                                id="numberCategoryId"
+                                value={numberCategoryId}
+                                onChange={onNumberCategoryIdChange}>
+                                <option>Select One</option>
+                                <option value={1}>Normal</option>
+                                <option value={2}>Gold</option>
+                            </select>
+
+                            <InputError
+                                messages={errors.numberCategoryId}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end mt-4">
+                            <Button className="ml-4">Create</Button>
+                        </div>
+                    </form>
+                </div>
             </MainBody>
         </AppLayout>
     )
