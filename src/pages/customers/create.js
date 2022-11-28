@@ -14,6 +14,9 @@ const Create = () => {
 
     let componentToReturn = <p>Please enter ic details.</p>
 
+    console.log('is customer null', customer === null)
+    console.log('is icDetails null', icDetails === null)
+
     if (customer === null && icDetails !== null) {
         componentToReturn = <CreateCustomerForm icDetails={icDetails} />
     }

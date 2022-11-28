@@ -1,6 +1,5 @@
-import Input from '@/components/Input'
-import Label from '@/components/Label'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Input, Select, DatePicker } from 'antd'
 import axios from '@/lib/axios'
 
 const IcCheckingInputsLite = ({
@@ -9,34 +8,62 @@ const IcCheckingInputsLite = ({
     ...props
 }) => {
     const [icNumber, setIcNumber] = useState('')
-    const [icTypeId, setIcTypeId] = useState('')
+    const [icNumberTouched, setIcNumberTouched] = useState(false)
+    const [icTypeId, setIcTypeId] = useState(1)
     const [icColorId, setIcColorId] = useState('')
     const [icExpiryDate, setIcExpiryDate] = useState('')
     const [customer, setCustomer] = useState(null)
+    const [icDetails, setIcDetails] = useState({})
+    const [errors, setErrors] = useState({})
+
+    const isIcYellow = ic => ic.startsWith('00') || ic.startsWith('01')
+    const isIcRed = ic => ic.startsWith('30') || ic.startsWith('31')
+    const isIcGreen = ic => ic.startsWith('50') || ic.startsWith('51')
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            if (
-                icNumber === '' ||
-                icTypeId === '' ||
-                icColorId === '' ||
-                icExpiryDate === ''
-            ) {
+            // onIcDetailsChange({
+            //     number: icNumber,
+            //     typeId: icTypeId,
+            //     colorId: icColorId,
+            //     expiryDate: icExpiryDate,
+            // })
+
+            if (customer !== null) {
+                console.log('has customer')
                 return
             }
 
-            onIcDetailsChange({
-                number: icNumber,
-                typeId: icTypeId,
-                colorId: icColorId,
-                expiryDate: icExpiryDate,
-            })
+            if (Object.keys(icDetails).length < 4) {
+                console.log('icDetails is incomplete!')
+                return
+            }
+
+            let hasData = true
+            console.log('icdetails is', icDetails)
+            for (const prop in icDetails) {
+                console.log('ic details for', prop, icDetails[prop])
+                if (
+                    icDetails[prop] === null ||
+                    icDetails[prop] === undefined ||
+                    icDetails[prop] === ''
+                ) {
+                    hasData = false
+                }
+            }
+
+            if (!hasData) {
+                console.log('no data yet.')
+                return
+            }
+
+            console.log('has data!')
 
             const endpoint = '/api/customers/search?'
             const queryString = new URLSearchParams('ic_number&ic_type_id')
 
-            queryString.set('ic_number', icNumber)
-            queryString.set('ic_type_id', icTypeId)
+            queryString.set('ic_number', icDetails.number)
+            queryString.set('ic_type_id', icDetails.typeId)
 
             axios
                 .get(`${endpoint}${queryString}`)
@@ -48,119 +75,252 @@ const IcCheckingInputsLite = ({
                         setIcTypeId('')
                         setIcColorId('')
                         setIcExpiryDate('')
+                        onCustomerChange({ ...customer })
                         onIcDetailsChange(null)
                         return
                     }
                     setCustomer(null)
+                    onIcDetailsChange({ ...icDetails })
                 })
                 .catch(e => console.error('IC number search failed', e))
         }, 500)
 
         return () => clearTimeout(timer)
-    }, [icNumber, icTypeId, icColorId, icExpiryDate])
+    }, [icDetails, customer])
 
     useEffect(() => {
-        onCustomerChange(customer === null ? null : { ...customer })
-    }, [customer])
+        const timer = setTimeout(() => {
+            if (!icNumberTouched) {
+                return
+            }
 
-    const onIcNumberChangeHandler = event => {
-        const value = event.target.value.trim()
-        setIcNumber(value)
+            if (!icNumber || icNumber.length === 0) {
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    icNumber: 'IC cannot be empty!',
+                }))
+                setCustomer(null)
+                setIcDetails(prevIcDetails => ({
+                    ...prevIcDetails,
+                    number: null,
+                }))
+                return
+            }
+
+            switch (icTypeId) {
+                case 1:
+                    if (icNumber.length !== 8) {
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            icNumber: 'IC must be 8 characters long.',
+                        }))
+                        setCustomer(null)
+                        setIcDetails(prevIcDetails => ({
+                            ...prevIcDetails,
+                            number: null,
+                        }))
+                        return
+                    }
+
+                    if (
+                        isIcYellow(icNumber) ||
+                        isIcRed(icNumber) ||
+                        isIcGreen(icNumber)
+                    ) {
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            icNumber: null,
+                        }))
+                        setCustomer(null)
+                        setIcDetails(prevIcDetails => ({
+                            ...prevIcDetails,
+                            number: icNumber,
+                        }))
+                    } else {
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            icNumber:
+                                'IC can only start with: 00, 01, 30, 31, 50, 51.',
+                        }))
+                        setCustomer(null)
+                        setIcDetails(prevIcDetails => ({
+                            ...prevIcDetails,
+                            number: null,
+                        }))
+                    }
+                    break
+                default:
+                    if (icNumber.length < 3) {
+                        setErrors(prevErrors => ({
+                            ...prevErrors,
+                            icNumber: 'IC must have 3 or more characters.',
+                        }))
+                        setCustomer(null)
+                        setIcDetails(prevIcDetails => ({
+                            ...prevIcDetails,
+                            number: null,
+                        }))
+                    }
+            }
+        }, 1000)
+        return () => clearTimeout(timer)
+    }, [icTypeId, icNumber])
+
+    useEffect(() => {
+        setIcDetails(prevIcDetails => ({
+            ...prevIcDetails,
+            typeId: icTypeId,
+        }))
         setCustomer(null)
-    }
+    }, [icTypeId])
 
-    const onIcTypeIdChangeHandler = event => {
-        const value = event.target.value.trim()
-        setIcTypeId(value)
+    useEffect(() => {
+        setIcDetails(prevIcDetails => ({
+            ...prevIcDetails,
+            colorId: icColorId,
+        }))
         setCustomer(null)
-    }
+    }, [icColorId])
 
-    const onIcColorIdChangeHandler = event => {
-        const value = event.target.value.trim()
-        setIcColorId(value)
-        setCustomer(null)
-    }
-
-    const onIcExpiryDateChangeHandler = event => {
-        const value = event.target.value.trim()
-        const expiry_date = new Date(value).setHours(0, 0, 0, 0)
+    useEffect(() => {
+        const expiryDate = new Date(icExpiryDate.toString()).setHours(
+            0,
+            0,
+            0,
+            0,
+        )
         const todayDate = new Date().setHours(0, 0, 0, 0)
 
-        // console.log("Today",todayDate)
-        // console.log("expiry",expiry_date)
-        // console.log()
-
-        if ((expiry_date >= 0) && (expiry_date <= todayDate)) {
-            alert("Expiry date cannot be today or in the past")
-            setIcExpiryDate('')
-            onIcDetailsChange(null)
+        if (expiryDate >= 0 && expiryDate <= todayDate) {
+            // alert('Expiry date cannot be today or in the past')
+            // setIcExpiryDate('')
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                icExpiryDate: 'Expiry date cannot be today or in the past!',
+            }))
+            setIcDetails(prevIcDetails => ({
+                ...prevIcDetails,
+                expiryDate: null,
+            }))
+            setCustomer(null)
             return
         }
-        setIcExpiryDate(value)
+
+        // setIcExpiryDate(value)
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            icExpiryDate: null,
+        }))
+        setIcDetails(prevIcDetails => ({
+            ...prevIcDetails,
+            expiryDate: icExpiryDate.toString(),
+        }))
         setCustomer(null)
+    }, [icExpiryDate])
+
+    useEffect(() => {
+        if (icTypeId !== 1) {
+            return
+        }
+
+        if (!icNumber || icNumber.length !== 8) {
+            return
+        }
+
+        if (isIcYellow(icNumber)) {
+            setIcColorId(1)
+            return
+        }
+
+        if (isIcRed(icNumber)) {
+            setIcColorId(2)
+            return
+        }
+
+        if (isIcGreen(icNumber)) {
+            setIcColorId(3)
+            return
+        }
+    }, [icColorId, icNumber, icTypeId])
+
+    const onIcNumberChangeHandler = event => {
+        if (!icNumberTouched) {
+            setIcNumberTouched(true)
+        }
+        setIcNumber(event.target.value)
     }
+    const onIcTypeIdChangeHandler = value => setIcTypeId(value)
+    const onIcColorIdChangeHandler = value => setIcColorId(value)
+    const onIcExpiryDateChangeHandler = value => setIcExpiryDate(value)
 
     return (
         <div>
             <div className="grid grid-cols-2 gap-2">
                 <div>
-                    <Label htmlFor="icNumber">Ic Number</Label>
-
+                    <p>Ic Number</p>
                     <Input
                         id="icNumber"
                         type="text"
                         value={icNumber}
-                        placeholder="01234567"
-                        pattern="[a-zA-Z0-9]{2}[0-9]{6}"
-                        className="block w-full"
                         required
                         onChange={onIcNumberChangeHandler}
+                        status={
+                            errors &&
+                            errors.icNumber !== undefined &&
+                            errors.icNumber !== null
+                                ? 'error'
+                                : ''
+                        }
                     />
+                    {errors.icNumber && <p>{errors.icNumber}</p>}
                 </div>
-                <div>
-                    <Label htmlFor="icTypeId">Ic Type</Label>
 
-                    <select
-                        id="icTypeId"
+                <div id="icTypeId">
+                    <p>Ic Type</p>
+                    <Select
                         value={icTypeId}
-                        className="w-full"
+                        onChange={onIcTypeIdChangeHandler}
                         required
-                        onChange={onIcTypeIdChangeHandler}>
-                        <option value="">Select One</option>
-                        <option value={1}>Personal</option>
-                        <option value={2}>Company</option>
-                        <option value={3}>Passport</option>
-                    </select>
+                        options={[
+                            { value: 1, label: 'Personal' },
+                            { value: 2, label: 'Company' },
+                            { value: 3, label: 'Passport' },
+                        ]}
+                    />
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-                <div>
-                    <Label htmlFor="icColorId">Ic Color</Label>
-
-                    <select
-                        id="icColorId"
+                <div id="icColorId">
+                    <p>Ic Color</p>
+                    <Select
+                        defaultValue={icColorId}
                         value={icColorId}
-                        className="w-full"
                         required
-                        onChange={onIcColorIdChangeHandler}>
-                        <option value="">Select One</option>
-                        <option value={1}>Yellow</option>
-                        <option value={2}>Green</option>
-                        <option value={3}>Purple</option>
-                    </select>
+                        onChange={onIcColorIdChangeHandler}
+                        options={[
+                            { value: 1, label: 'Yellow' },
+                            { value: 2, label: 'Green' },
+                            { value: 3, label: 'Red' },
+                        ]}
+                    />
                 </div>
                 <div>
-                    <Label htmlFor="icExpiryDate">Ic Expiry Date</Label>
-
-                    <Input
+                    <p>Expiry Date</p>
+                    <DatePicker
                         id="icExpiryDate"
-                        type="date"
                         value={icExpiryDate}
-                        className="block mt-1 w-full"
-                        required
                         onChange={onIcExpiryDateChangeHandler}
+                        required
+                        status={
+                            errors &&
+                            errors.icExpiryDate !== undefined &&
+                            errors.icExpiryDate !== null
+                                ? 'error'
+                                : ''
+                        }
                     />
+                    {errors.icExpiryDate && <p>{errors.icExpiryDate}</p>}
                 </div>
             </div>
         </div>
