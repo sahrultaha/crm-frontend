@@ -107,6 +107,7 @@ const Create = () => {
                 <p>Pack id is {pack.id}</p>
                 <p>Product id is {pack.product_id}</p>
                 <p>Imsi id is {pack.imsi_id}</p>
+                {console.log({number})}
                 {!loading && !subCreated && (
                     <Button onClick={createSubscription}>
                         Create Subscription

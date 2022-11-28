@@ -59,6 +59,13 @@ const Navigation = ({ user }) => {
                                 Subscriptions
                             </NavLink>
                         </div>
+                        <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <NavLink
+                                href="/msisdn/create"
+                                active={router.pathname === '/msisdn/create'}>
+                                MSISDN
+                            </NavLink>
+                        </div>
                     </div>
 
                     {/* Settings Dropdown */}
