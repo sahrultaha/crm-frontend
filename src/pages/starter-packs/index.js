@@ -5,6 +5,7 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import axios from '@/lib/axios'
 import { Pagination } from '@mui/material'
+import PackNav from '@/components/forms/packs/PackNav'
 
 const PackTable = ({ isLoading, items }) => {
     if (isLoading) {
@@ -139,6 +140,7 @@ const Index = () => {
                 <title>Starter Pack</title>
             </Head>
             <MainBody>
+                <PackNav></PackNav>
                 <div className="flex"></div>
                 <Dashboard></Dashboard>
             </MainBody>
