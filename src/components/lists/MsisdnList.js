@@ -7,7 +7,17 @@ const MsisdnList = () => {
         loading,
         currentLastPage,
         setCurrentPage,
+        deleteItemFromList,
     } = useGetData('/api/msisdn')
+
+    const deleteHandler = id => {
+        let confirmDelete = confirm(
+            `Do you want to delete the entry with id ${id}?`,
+        )
+        if (confirmDelete) {
+            deleteItemFromList(id)
+        }
+    }
 
     let listItems = []
     if (!loading && data.length > 0) {
@@ -19,6 +29,11 @@ const MsisdnList = () => {
                     <td>{d.number_type_id}</td>
                     <td>{d.number_status_id}</td>
                     <td>{d.number_category_id}</td>
+                    <td>
+                        <Button onClick={() => deleteHandler(d.id)}>
+                            Delete
+                        </Button>
+                    </td>
                 </tr>
             )
         })
@@ -51,6 +66,7 @@ const MsisdnList = () => {
                         <th>Number Type</th>
                         <th>Number Status</th>
                         <th>Number Category</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>{listItems}</tbody>
