@@ -22,7 +22,7 @@ const BulkUpload = () => {
             </Head>
             <MainBody>
                 <ImsiNav></ImsiNav>
-                ß<div className="flex flex-row">
+                <div className="flex flex-row">
                     <ImsiBulkUpload></ImsiBulkUpload>
                 </div>
             </MainBody>
