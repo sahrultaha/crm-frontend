@@ -1,4 +1,5 @@
 import IndexTable from '@/components/Layouts/IndexTable'
+import TimestampDiv from '@/components/TimestampDiv'
 
 const columns = [
     {
@@ -13,6 +14,7 @@ const columns = [
     {
         title: 'Created at',
         dataIndex: 'created_at',
+        render: (created_at) => <TimestampDiv time={created_at}></TimestampDiv>
     },
     {
         title: 'Unprocessed',
