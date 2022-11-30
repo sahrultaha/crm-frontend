@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 import AppLayout from '@/components/Layouts/AppLayout'
 import MainBody from '@/components/MainBody'
 import Head from 'next/head'
+import ImsiNav from '@/components/Layouts/imsi/ImsiNav'
 
 const Create = () => {
     const router = useRouter()
@@ -38,15 +39,15 @@ const Create = () => {
             puk_2: puk2,
         }
 
-        let dataHasEmptyProperty = false;
-        for(let property in data) {
-            if(data[property] === null || data[property] === '') {
-                dataHasEmptyProperty = true;
+        let dataHasEmptyProperty = false
+        for (let property in data) {
+            if (data[property] === null || data[property] === '') {
+                dataHasEmptyProperty = true
                 break
             }
         }
-        
-        if(dataHasEmptyProperty) {
+
+        if (dataHasEmptyProperty) {
             console.error('data has empty property', data)
             return
         }
@@ -85,6 +86,7 @@ const Create = () => {
                 <title>Create Imsi</title>
             </Head>
             <MainBody>
+                <ImsiNav></ImsiNav>
                 <form className="mx-auto max-w-screen-sm" onSubmit={submitForm}>
                     <div>
                         <Label htmlFor="imsi">Imsi</Label>

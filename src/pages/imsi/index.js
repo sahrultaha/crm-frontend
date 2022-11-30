@@ -4,6 +4,7 @@ import MainBody from '@/components/MainBody'
 import NavLink from '@/components/NavLink'
 import Head from 'next/head'
 import ImsiList from '@/components/lists/ImsiList'
+import ImsiNav from '@/components/Layouts/imsi/ImsiNav'
 
 const Index = () => {
     const router = useRouter()
@@ -19,31 +20,8 @@ const Index = () => {
                 <title>Imsi List</title>
             </Head>
             <MainBody>
-                <div className="flex">
-                    <div className="mr-4">
-                        <NavLink
-                            href="/imsi"
-                            active={router.pathname === '/imsi'}>
-                            IMSI
-                        </NavLink>
-                    </div>
-                    <div className="mr-4">
-                        <NavLink
-                            href="/imsi/create"
-                            active={router.pathname === '/imsi/create'}>
-                            Create New IMSI
-                        </NavLink>
-                    </div>
-                    <div>
-                        <NavLink
-                            href="/imsi/bulk-upload"
-                            active={router.pathname === '/imsi/bulk-upload'}>
-                            Bulk Upload
-                        </NavLink>
-                    </div>
-                </div>
-
-                <ImsiList/>
+                <ImsiNav></ImsiNav>
+                <ImsiList />
             </MainBody>
         </AppLayout>
     )
