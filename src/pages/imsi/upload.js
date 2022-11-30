@@ -7,6 +7,8 @@ import NavLink from '@/components/NavLink'
 import Head from 'next/head'
 import ImsiBulkUpload from '@/components/forms/imsi/ImsiBulkUpload'
 import ImsiNav from '@/components/Layouts/imsi/ImsiNav'
+import { Table } from 'antd'
+import ImsiUploadTable from '@/components/Layouts/imsi/ImsiUploadTable'
 
 const BulkUpload = () => {
     const router = useRouter()
@@ -25,6 +27,7 @@ const BulkUpload = () => {
                 <div className="flex flex-row">
                     <ImsiBulkUpload></ImsiBulkUpload>
                 </div>
+                <ImsiUploadTable></ImsiUploadTable>
             </MainBody>
         </AppLayout>
     )
