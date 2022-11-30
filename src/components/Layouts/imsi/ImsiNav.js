@@ -7,14 +7,14 @@ const ImsiNav = () => {
         <div className="flex mb-10">
             <div className="mr-4">
                 <NavLink href="/imsi" active={router.pathname === '/imsi'}>
-                    <a>Imsi</a>
+                    Imsi
                 </NavLink>
             </div>
             <div className="mr-4">
                 <NavLink
                     href="/imsi/create"
                     active={router.pathname === '/imsi/create'}>
-                    <a>Create</a>
+                    Create
                 </NavLink>
             </div>
             <div>
