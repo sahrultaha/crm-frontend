@@ -53,8 +53,7 @@ const Show = () => {
             setSubscriptionStatus(document.getElementById('update_' + id).value)
             // console.log('status',subscriptionStatus)
             // console.log('subs id',id)
-            axios.post('/api/subscriptions/status/update', {
-                id: id,
+            axios.post(`/api/subscriptions/${id}`, {
                 subscription_status_id: subscriptionStatus,
                 _method: 'PATCH'
             }).then(response => {
