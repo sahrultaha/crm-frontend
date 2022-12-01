@@ -10,13 +10,13 @@ const Show = () => {
     const { id } = router.query
     const [data, setData] = useState(null)
     const [icUrls, setIcUrls] = useState([])
-    const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(false)
     const [icColor, setIcColor] = useState('')
     const [icType, setIcType] = useState('')
 
     const [district, setDistrict] = useState('-----')
     const [mukim, setMukim] = useState('-----')
-    const [village, setVillage] = useState({ id: '', 'name': '' })
+    const [village, setVillage] = useState({ id: '', name: '' })
     const [postalCode, setPostalCode] = useState('')
     const [houseNumber, setHouseNumber] = useState('')
     const [simpang, setSimpang] = useState('')
@@ -68,7 +68,7 @@ const Show = () => {
     useEffect(() => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
-        axios (`/api/subscriptions/${CustomerId}`)
+        axios(`/api/subscriptions/${CustomerId}`)
             .then(res => {
                 setNumber(res.data.data)
                 setNumberCount(res.data.data.length)
@@ -76,14 +76,12 @@ const Show = () => {
             .catch(error => {
                 console.log('Error fetching customer subscriptions...', error)
             })
-    }, [router.isReady])   
+    }, [router.isReady])
 
     let listItems = []
     for (let i = 1; i <= numbercount; i++) {
         listItems = number.map(n => {
-            return (
-                <li key={n.id}>{n.number.number}</li>
-            )
+            return <li key={n.id}>{n.number.number}</li>
         })
     }
 
@@ -99,24 +97,33 @@ const Show = () => {
                 setCountry(res.data['country']['name'] ?? '')
                 console.log(res.data['address'][0]['address']['building_name'])
 
-                if ((res.data['address']).length > 0) {
-                    setHouseNumber(res.data['address'][0]['address']['house_number'])
+                if (res.data['address'].length > 0) {
+                    setHouseNumber(
+                        res.data['address'][0]['address']['house_number'],
+                    )
                     setSimpang(res.data['address'][0]['address']['simpang'])
                     setStreet(res.data['address'][0]['address']['street'])
-                    setBuildingName(res.data['address'][0]['address']['building_name'])
+                    setBuildingName(
+                        res.data['address'][0]['address']['building_name'],
+                    )
                     setBlock(res.data['address'][0]['address']['block'])
                     setFloor(res.data['address'][0]['address']['floor'])
                     setUnit(res.data['address'][0]['address']['unit'])
                     setMukim(res.data['address'][0]['address']['mukim']['name'])
-                    setDistrict(res.data['address'][0]['address']['district']['name'])
-                    setPostalCode(res.data['address'][0]['address']['postalcode']['name'])
+                    setDistrict(
+                        res.data['address'][0]['address']['district']['name'],
+                    )
+                    setPostalCode(
+                        res.data['address'][0]['address']['postalcode']['name'],
+                    )
                     setVillage({
-                        'id': res.data['address'][0]['address']['village']['id'],
-                        'name': res.data['address'][0]['address']['village']['name']
+                        id: res.data['address'][0]['address']['village']['id'],
+                        name:
+                            res.data['address'][0]['address']['village'][
+                                'name'
+                            ],
                     })
-
                 }
-
             })
             .catch(error => {
                 console.log('Error fetching customer details...', error)
@@ -131,12 +138,11 @@ const Show = () => {
 
         try {
             for (const fileId of data.file_ids) {
-                const resp = await axios.get(`/api/files/${fileId}`)
                 setIcUrls(prevState => [
                     ...prevState,
                     {
                         id: fileId,
-                        url: resp.data.url,
+                        url: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/files/${fileId}`,
                     },
                 ])
             }
@@ -195,7 +201,6 @@ const Show = () => {
                             Customer Name : {data.name}
                         </div>
 
-
                         <div className="p-6 bg-white border-b border-gray-200">
                             Account Category: {data.account_category.name}
                         </div>
@@ -214,7 +219,8 @@ const Show = () => {
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Phone Number :+{data.country_code} {data.mobile_number}
+                            Phone Number :+{data.country_code}{' '}
+                            {data.mobile_number}
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             Email : {data.email}
@@ -225,15 +231,30 @@ const Show = () => {
 
                         <div className="p-6 bg-white border-b border-gray-200">
                             Address <br />
-                            {houseNumber !== null ? `${houseNumber},` : ``} {floor !== null ? `${floor},` : ``} {block !== null ? `${block},` : ``} <br />
-                            {buildingName !== null ? `${buildingName},` : ``} {simpang !== null ? `${simpang},` : ``} {street !== null ? `${street},` : ``} <br />
-                            {village.name !== '' || village.name !== null ? `${village.name},` : ``}<br />
-                            {postalCode !== '' || postalCode !== null ? `${postalCode},` : ``}<br />
-                            {district !== '-----' || district !== null ? `${district},` : ``} <br />
+                            {houseNumber !== null ? `${houseNumber},` : ``}{' '}
+                            {floor !== null ? `${floor},` : ``}{' '}
+                            {block !== null ? `${block},` : ``} <br />
+                            {buildingName !== null
+                                ? `${buildingName},`
+                                : ``}{' '}
+                            {simpang !== null ? `${simpang},` : ``}{' '}
+                            {street !== null ? `${street},` : ``} <br />
+                            {village.name !== '' || village.name !== null
+                                ? `${village.name},`
+                                : ``}
+                            <br />
+                            {postalCode !== '' || postalCode !== null
+                                ? `${postalCode},`
+                                : ``}
+                            <br />
+                            {district !== '-----' || district !== null
+                                ? `${district},`
+                                : ``}{' '}
+                            <br />
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Subscriptions ({numbercount})<br/>
+                            Subscriptions ({numbercount})<br />
                             <ul>{listItems}</ul>
                         </div>
 
@@ -248,9 +269,19 @@ const Show = () => {
                         </div>
                         <div className="p-6 bg-white border-b border-gray-200">
                             <div className="flex items-center justify-end mt-4">
-                                <Button className="ml-1" onClick={createSubscription}>Create New Subscription</Button>
-                                <Button className="ml-2" onClick={gotoUpdate}>Edit</Button>
-                                <Button className="ml-2" onClick={() => setShowModal(true)}>Delete</Button>
+                                <Button
+                                    className="ml-1"
+                                    onClick={createSubscription}>
+                                    Create New Subscription
+                                </Button>
+                                <Button className="ml-2" onClick={gotoUpdate}>
+                                    Edit
+                                </Button>
+                                <Button
+                                    className="ml-2"
+                                    onClick={() => setShowModal(true)}>
+                                    Delete
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -259,9 +290,7 @@ const Show = () => {
 
             {showModal ? (
                 <>
-                    <div
-                        className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-                    >
+                    <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
                         <div className="relative w-auto my-6 mx-auto max-w-3xl">
                             {/*content*/}
                             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
@@ -272,8 +301,7 @@ const Show = () => {
                                     </h3>
                                     <button
                                         className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                                        onClick={() => setShowModal(false)}
-                                    >
+                                        onClick={() => setShowModal(false)}>
                                         <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
                                             ×
                                         </span>
