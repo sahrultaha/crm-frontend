@@ -5,6 +5,7 @@ import Button from '@/components/Button'
 import axios from '@/lib/axios'
 import React, { useState, useEffect } from 'react'
 
+
 const Show = () => {
     const router = useRouter()
     const { id } = router.query
@@ -34,12 +35,43 @@ const Show = () => {
     const [number, setNumber] = useState(null)
     const [numbercount, setNumberCount] = useState(null)
 
+    const [subscriptionStatusList, setSubscriptionStatusList] = useState([])
+    const [subscriptionStatus, setSubscriptionStatus] = useState('')
     function gotoUpdate() {
         router.push(`/customers/update?id=${id}`)
     }
+
     function createSubscription() {
         router.push(`/subscriptions/create`)
     }
+
+    const handleChange = (id) => (event) => {
+        const { id: CustomerId } = router.query
+        var confirmBox = confirm('Are you sure to change subscription status?');
+
+        if (confirmBox) {
+            setSubscriptionStatus(document.getElementById('update_' + id).value)
+            // console.log('status',subscriptionStatus)
+            // console.log('subs id',id)
+            axios.post(`/api/subscriptions/${id}`, {
+                subscription_status_id: subscriptionStatus,
+                _method: 'PATCH'
+            }).then(response => {
+                // console.log(response)
+                alert("Status change success")
+                console.log("success update")
+                router.push(`/customers/${CustomerId}`)
+            })
+                .catch(error => {
+                    console.log('error!')
+                })
+        }
+        else {
+            event.preventDefault();
+            return false;
+        }
+    };
+
 
     function delCustomer() {
         axios
@@ -47,7 +79,7 @@ const Show = () => {
             .then(response => {
                 const id = response.data.id
                 // console.log(response)
-                router.push('/customers')
+                router.push(`/customers`)
             })
             .catch(error => {
                 console.log('error!')
@@ -65,24 +97,55 @@ const Show = () => {
             })
     }
 
-    useEffect(() => {
+
+    useEffect(async () => {
         if (!router.isReady) return
         const { id: CustomerId } = router.query
-        axios (`/api/subscriptions/${CustomerId}`)
-            .then(res => {
-                setNumber(res.data.data)
-                setNumberCount(res.data.data.length)
-            })
-            .catch(error => {
-                console.log('Error fetching customer subscriptions...', error)
-            })
-    }, [router.isReady])   
+        try {
+            const response = await axios(`/api/subscriptions/status`)
+            setSubscriptionStatusList(response.data.data)
+
+
+            const res = await axios(`/api/subscriptions/${CustomerId}`)
+            setNumber(res.data.data)
+            setNumberCount(res.data.data.length)
+
+        }
+
+        catch (e) {
+            console.log('Error getting subscription status list...', e)
+        }
+    }, [router.isReady])
+
 
     let listItems = []
     for (let i = 1; i <= numbercount; i++) {
         listItems = number.map(n => {
             return (
-                <li key={n.id}>{n.number.number}</li>
+                <tr key={n.subscription_id}>
+                    <td>{n.subscription_id}</td>
+                    <td>{n.number.number}</td>
+                    <td>{n.subscription.subscription_type.name} {n.imsi.imsi_type.name}</td>
+                    <td>{n.imsi.imsi}</td>
+                    <td>
+                        <select
+                            id={`update_${n.subscription_id}`}
+                            onChange={ev => setSubscriptionStatus(ev.target.value)}
+                            defaultValue={n.subscription.subscription_status_id}
+                        >
+                            {subscriptionStatusList.map((status) => (
+                                <option
+                                    key={status.id}
+                                    value={status.id}
+                                >{status.name}</option>
+                            ))}
+                        </select>
+
+                    </td>
+                    <td><Button className="ml-2"
+                        onClick={handleChange(`${n.subscription_id}`)}
+                    >Save</Button></td>
+                </tr>
             )
         })
     }
@@ -92,12 +155,12 @@ const Show = () => {
         const { id: CustomerId } = router.query
         axios(`/api/customers/${CustomerId}`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setData(res.data)
                 setIcColor(res.data['ic_color']['name'] ?? '')
                 setIcType(res.data['ic_type']['name'] ?? '')
                 setCountry(res.data['country']['name'] ?? '')
-                console.log(res.data['address'][0]['address']['building_name'])
+                // console.log(res.data['address'][0]['address']['building_name'])
 
                 if ((res.data['address']).length > 0) {
                     setHouseNumber(res.data['address'][0]['address']['house_number'])
@@ -233,8 +296,23 @@ const Show = () => {
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
-                            Subscriptions ({numbercount})<br/>
-                            <ul>{listItems}</ul>
+                            Subscriptions  ({numbercount})<br />
+
+                            <div>
+                                <table className="w-full table-fixed">
+                                    <thead>
+                                        <tr className="text-left">
+                                            <th>ID</th>
+                                            <th>Number</th>
+                                            <th>Type</th>
+                                            <th>IMSI</th>
+                                            <th>Subscription Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>{listItems}</tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <div className="p-6 bg-white border-b border-gray-200">
