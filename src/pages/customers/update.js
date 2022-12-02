@@ -145,7 +145,7 @@ const Update = () => {
 
         axios(`/api/customers/get?id=${CustomerId}`)
             .then(res => {
-                // console.log("test",res.data)
+                console.log("test",res.data)
 
                 setData(res.data)
 
